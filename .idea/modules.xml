@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/aos_tools.iml" filepath="$PROJECT_DIR$/.idea/aos_tools.iml" />
+      <module fileurl="file://G:/work/Alias/testttt/.idea/testttt.iml" filepath="G:/work/Alias/testttt/.idea/testttt.iml" />
+    </modules>
+  </component>
+</project>
