@@ -1,0 +1,40 @@
+#GET https://pnnct8s9sk.execute-api.us-east-1.amazonaws.com/prod/players?limit=100&eventId=o6QVSixlGK&expand%5B%5D=army&expand%5B%5D=subFaction&expand%5B%5D=character&expand%5B%5D=team&expand%5B%5D=user
+GET https://pnnct8s9sk.execute-api.us-east-1.amazonaws.com/prod/players?limit=100&eventId=o6QVSixlGK&expand[true]=army&expand[true]=subFaction&expand[true]=character&expand[]=team&expand[]=user
+Client-id: {{bcp-Client-id}}
+Authorization: {{bcp-Authorization}}
+Identity: {{bcp-Identity}}
+
+
+### Get all events
+GET https://prod-api.bestcoastpairings.com/events?limit=40&startDate=2023-01-01T00%3A00%3A00Z&endDate=2024-01-31T00%3A00%3A00Z&sortKey=eventDate&sortAscending=true&gameType=4
+Client-id: 6avfri6v9tgfe6fonujq07eu9c
+Authorization: {{bcp-Authorization}}
+Identity: {{bcp-Identity}}
+
+
+### Get specific event details
+GET https://prod-api.bestcoastpairings.com/events/6UKY5AU7JX?expand%5B%5D=location&expand%5B%5D=gameStore&expand%5B%5D=owner&expand%5B%5D=gameSystem&expand%5B%5D=scorecard&expand%5B%5D=teamScorecard&expand%5B%5D=role&expand%5B%5D=following&expand%5B%5D=player
+Client-id: {{bcp-Client-id}}
+Authorization: {{bcp-Authorization}}
+Identity: {{bcp-Identity}}
+
+
+### Event roster
+GET https://prod-api.bestcoastpairings.com/events/6UKY5AU7JX?expand%5B%5D=location&expand%5B%5D=gameStore&expand%5B%5D=owner&expand%5B%5D=gameSystem&expand%5B%5D=scorecard&expand%5B%5D=teamScorecard&expand%5B%5D=role&expand%5B%5D=following&expand%5B%5D=player
+Client-id: {{bcp-Client-id}}
+Authorization: {{bcp-Authorization}}
+Identity: {{bcp-Identity}}
+
+
+### Army list
+GET https://prod-api.bestcoastpairings.com/armylists/LDFDMT6KN7
+Client-id: {{bcp-Client-id}}
+Authorization: {{bcp-Authorization}}
+Identity: {{bcp-Identity}}
+
+
+### Placings
+GET https://prod-api.bestcoastpairings.com/players?limit=100&eventId=ZmC3CxkIuD&placings=true&expand%5B%5D=team&expand%5B%5D=army&expand%5B%5D=subFaction&expand%5B%5D=character
+Client-id: {{bcp-Client-id}}
+Authorization: {{bcp-Authorization}}
+Identity: {{bcp-Identity}}

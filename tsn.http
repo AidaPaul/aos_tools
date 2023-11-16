@@ -1,0 +1,246 @@
+POST https://wabi-uk-south-c-primary-api.analysis.windows.net/public/reports/querydata?synchronous=true
+X-PowerBI-ResourceKey: 71728b61-4f5a-402a-9000-6457d14f4879
+
+{
+  "version": "1.0.0",
+  "queries": [
+    {
+      "Query": {
+        "Commands": [
+          {
+            "SemanticQueryDataShapeCommand": {
+              "Query": {
+                "Version": 2,
+                "From": [
+                  {
+                    "Name": "f",
+                    "Entity": "Faction Outcomes",
+                    "Type": 0
+                  },
+                  {
+                    "Name": "t",
+                    "Entity": "Tournament Dates",
+                    "Type": 0
+                  }
+                ],
+                "Select": [
+                  {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "f"
+                        }
+                      },
+                      "Property": "Tournament Name"
+                    },
+                    "Name": "Faction Outcomes.Tournament Name"
+                  },
+                  {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "f"
+                        }
+                      },
+                      "Property": "Outcome"
+                    },
+                    "Name": "Faction Outcomes.Outcome"
+                  },
+                  {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "f"
+                        }
+                      },
+                      "Property": "Tournament Tier"
+                    },
+                    "Name": "Faction Outcomes.Tournament Tier"
+                  },
+                  {
+                    "Aggregation": {
+                      "Expression": {
+                        "Column": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Source": "f"
+                            }
+                          },
+                          "Property": "Points (Total)"
+                        }
+                      },
+                      "Function": 0
+                    },
+                    "Name": "Sum(Faction Outcomes.Points (Total))"
+                  },
+                  {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "f"
+                        }
+                      },
+                      "Property": "Faction: Subfaction"
+                    },
+                    "Name": "Faction Outcomes.Faction: Subfaction"
+                  },
+                  {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "t"
+                        }
+                      },
+                      "Property": "Country (ABV)"
+                    },
+                    "Name": "Tournament Dates.Country (ABV)"
+                  }
+                ],
+                "Where": [
+                  {
+                    "Condition": {
+                      "In": {
+                        "Expressions": [
+                          {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Source": "f"
+                                }
+                              },
+                              "Property": "Player"
+                            }
+                          }
+                        ],
+                        "Values": [
+                          [
+                            {
+                              "Literal": {
+                                "Value": "'Brookes, Marc'"
+                              }
+                            }
+                          ]
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "Condition": {
+                      "In": {
+                        "Expressions": [
+                          {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Source": "f"
+                                }
+                              },
+                              "Property": "Season"
+                            }
+                          }
+                        ],
+                        "Values": [
+                          [
+                            {
+                              "Literal": {
+                                "Value": "'Season 2'"
+                              }
+                            }
+                          ]
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "Condition": {
+                      "Not": {
+                        "Expression": {
+                          "In": {
+                            "Expressions": [
+                              {
+                                "Column": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Source": "t"
+                                    }
+                                  },
+                                  "Property": "Version"
+                                }
+                              }
+                            ],
+                            "Values": [
+                              [
+                                {
+                                  "Literal": {
+                                    "Value": "null"
+                                  }
+                                }
+                              ]
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "OrderBy": [
+                  {
+                    "Direction": 2,
+                    "Expression": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "f"
+                          }
+                        },
+                        "Property": "Outcome"
+                      }
+                    }
+                  }
+                ]
+              },
+              "Binding": {
+                "Primary": {
+                  "Groupings": [
+                    {
+                      "Projections": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                      ]
+                    }
+                  ]
+                },
+                "DataReduction": {
+                  "DataVolume": 3,
+                  "Primary": {
+                    "Window": {
+                      "Count": 500
+                    }
+                  }
+                },
+                "Version": 1
+              },
+              "ExecutionMetricsKind": 1
+            }
+          }
+        ]
+      },
+      "QueryId": "",
+      "ApplicationContext": {
+        "DatasetId": "0cdc51d2-4b8b-440b-a490-6ecf3db13e5e",
+        "Sources": [
+          {
+            "ReportId": "09893c93-2eda-46f1-b96e-1f7514f2015c",
+            "VisualId": "2bb65e3200a719060e34"
+          }
+        ]
+      }
+    }
+  ],
+  "cancelQueries": [],
+  "modelId": 89938
+}
