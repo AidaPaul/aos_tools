@@ -32,6 +32,7 @@ class Event(models.Model):
     photo_url = models.URLField(null=True)
     players_count = models.IntegerField(null=True)
     points_limit = models.IntegerField(null=True)
+    rounds = models.IntegerField(default=5)
 
     def __str__(self):
         return self.name

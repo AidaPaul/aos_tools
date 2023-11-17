@@ -28,6 +28,7 @@ class Command(BaseCommand):
                     "name": event["name"],
                     "start_date": event["eventDate"],
                     "end_date": event["eventEndDate"],
+                    "rounds": event["numberOfRounds"],
                 }
                 if "numTickets" in event:
                     event_dict["players_count"] = event["numTickets"]

@@ -38,3 +38,10 @@ GET https://prod-api.bestcoastpairings.com/players?limit=100&eventId=ZmC3CxkIuD&
 Client-id: {{bcp-Client-id}}
 Authorization: {{bcp-Authorization}}
 Identity: {{bcp-Identity}}
+
+
+### Pairings
+GET https://prod-api.bestcoastpairings.com/pairings?limit=100&eventId=vM4hfrjTlB&round=5&pairingType=Pairing&expand%5B%5D=player1&expand%5B%5D=player2&expand%5B%5D=player1Game&expand%5B%5D=player2Game
+Client-id: {{bcp-Client-id}}
+Authorization: {{bcp-Authorization}}
+Identity: {{bcp-Identity}}
