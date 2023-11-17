@@ -6,8 +6,8 @@ Identity: {{bcp-Identity}}
 
 
 ### Get all events
-GET https://prod-api.bestcoastpairings.com/events?limit=40&startDate=2023-01-01T00%3A00%3A00Z&endDate=2024-01-31T00%3A00%3A00Z&sortKey=eventDate&sortAscending=true&gameType=4
-Client-id: 6avfri6v9tgfe6fonujq07eu9c
+GET https://prod-api.bestcoastpairings.com/events?limit=100&startDate=2023-01-01T00%3A00%3A00Z&endDate=2024-01-31T00%3A00%3A00Z&sortKey=eventDate&sortAscending=true&gameType=4
+Client-id: {{bcp-Client-id}}
 Authorization: {{bcp-Authorization}}
 Identity: {{bcp-Identity}}
 
