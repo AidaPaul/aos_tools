@@ -31,6 +31,7 @@ class Event(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True)
     photo_url = models.URLField(null=True)
     players_count = models.IntegerField(null=True)
+    points_limit = models.IntegerField(null=True)
 
     def __str__(self):
         return self.name
@@ -61,3 +62,16 @@ class Participant(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    source_json = models.JSONField()
+    army_source_id = models.CharField(max_length=100, null=True)
+
+
+class List(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
+    source_id = models.CharField(max_length=100)
+    source_json = models.JSONField()
+    player_created_at = models.DateTimeField()
+    player_updated_at = models.DateTimeField()
+    raw_list = models.TextField()

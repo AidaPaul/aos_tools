@@ -20,7 +20,7 @@ Identity: {{bcp-Identity}}
 
 
 ### Event roster
-GET https://prod-api.bestcoastpairings.com/events/6UKY5AU7JX?expand%5B%5D=location&expand%5B%5D=gameStore&expand%5B%5D=owner&expand%5B%5D=gameSystem&expand%5B%5D=scorecard&expand%5B%5D=teamScorecard&expand%5B%5D=role&expand%5B%5D=following&expand%5B%5D=player
+GET https://prod-api.bestcoastpairings.com/players?limit=100&eventId=kGJY0dlWiN&expand%5B%5D=army&expand%5B%5D=subFaction&expand%5B%5D=character&expand%5B%5D=team&expand%5B%5D=user
 Client-id: {{bcp-Client-id}}
 Authorization: {{bcp-Authorization}}
 Identity: {{bcp-Identity}}

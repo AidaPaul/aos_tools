@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from lists.models import Event, BCP
+from data.models import Event, BCP
 import requests
 
 
@@ -31,6 +31,8 @@ class Command(BaseCommand):
                 }
                 if "numTickets" in event:
                     event_dict["players_count"] = event["numTickets"]
+                if "pointsValue" in event:
+                    event_dict["points_limit"] = event["pointsValue"]
                 Event.objects.update_or_create(
                     source=BCP, source_id=event["id"], defaults=event_dict
                 )
