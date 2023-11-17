@@ -12,7 +12,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         headers = settings.BCP_HEADERS
         for participant in Participant.objects.filter(
-            Q(army_source_id__isnull=False) & Q(event__source=BCP)
+            Q(army_source_id__isnull=False)
+            & Q(event__source=BCP)
+            & Q(list__raw_list=None)
         ):
             url = f"https://prod-api.bestcoastpairings.com/armylists/{participant.army_source_id}"
             response = requests.get(url, headers=headers)
@@ -32,9 +34,23 @@ class Command(BaseCommand):
             }
             if "armyListText" in data:
                 list_dict["list_text"] = data["armyListText"]
-            List.objects.update_or_create(
-                source_id=participant.army_source_id, defaults=list_dict
-            )
+            else:
+                self.stdout.write(
+                    self.style.ERROR(
+                        f"Failed to fetch data for {participant.army_source_id}, no armyListText"
+                    )
+                )
+            try:
+                List.objects.update_or_create(
+                    source_id=participant.army_source_id, defaults=list_dict
+                )
+            except Exception as e:
+                self.stderr.write(
+                    self.style.ERROR(
+                        f"Failed to fetch data for {participant.army_source_id}, exception: {e}"
+                    )
+                )
+                continue
             self.stdout.write(
                 self.style.SUCCESS(
                     f"Successfully fetched data for {participant.army_source_id}"
