@@ -29,6 +29,7 @@ class Command(BaseCommand):
                 "participant": participant,
                 "player_created_at": data["created_at"],
                 "player_updated_at": data["updated_at"],
+                "raw_list": data["armyListText"],
             }
             List.objects.update_or_create(
                 source_id=participant.army_source_id, defaults=list_dict
