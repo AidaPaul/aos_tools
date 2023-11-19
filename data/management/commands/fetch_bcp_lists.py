@@ -11,48 +11,21 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         headers = settings.BCP_HEADERS
-        for participant in Participant.objects.filter(
-            Q(army_source_id__isnull=False)
-            & Q(event__source=BCP)
-            & Q(list__raw_list=None)
-        ):
-            url = f"https://prod-api.bestcoastpairings.com/armylists/{participant.army_source_id}"
+        for list in List.objects.filter(source_id__isnull=False):
+            url = f"https://prod-api.bestcoastpairings.com/armylists/{list.source_id}"
             response = requests.get(url, headers=headers)
             if response.status_code != 200:
                 self.stderr.write(
                     self.style.ERROR(
-                        f"Failed to fetch data for {participant.army_source_id}, code: {response.status_code} body response: {response.text}"
+                        f"Failed to fetch data for {list.source_id}, code: {response.status_code} body response: {response.text}"
                     )
                 )
                 continue
             data = response.json()
-            list_dict = {
-                "source_json": data,
-                "participant": participant,
-                "player_created_at": data["created_at"],
-                "player_updated_at": data["updated_at"],
-            }
+            list.source_json = data
             if "armyListText" in data:
-                list_dict["list_text"] = data["armyListText"]
-            else:
-                self.stdout.write(
-                    self.style.ERROR(
-                        f"Failed to fetch data for {participant.army_source_id}, no armyListText"
-                    )
-                )
-            try:
-                List.objects.update_or_create(
-                    source_id=participant.army_source_id, defaults=list_dict
-                )
-            except Exception as e:
-                self.stderr.write(
-                    self.style.ERROR(
-                        f"Failed to fetch data for {participant.army_source_id}, exception: {e}"
-                    )
-                )
-                continue
+                list.raw_list = data["armyListText"]
+            list.save()
             self.stdout.write(
-                self.style.SUCCESS(
-                    f"Successfully fetched data for {participant.army_source_id}"
-                )
+                self.style.SUCCESS(f"Successfully fetched data for {list.source_id}")
             )

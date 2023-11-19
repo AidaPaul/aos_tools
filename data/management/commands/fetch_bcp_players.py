@@ -26,9 +26,14 @@ class Command(BaseCommand):
                     "source_id": player["id"],
                     "source_json": player,
                 }
-                army_id = None
+                army_source_id = None
                 if "armyListObjectId" in player:
-                    army_id = player["armyListObjectId"]
+                    army_source_id = player["armyListObjectId"]
+                army_id = None
+                if "army" in player and "id" in player["army"]:
+                    army_id = player["army"]["id"]
+                if "armyId" in player:
+                    army_id = player["armyId"]
                 Player.objects.update_or_create(
                     source=BCP, source_id=player["id"], defaults=player_dict
                 )
@@ -36,7 +41,8 @@ class Command(BaseCommand):
                     "event": event,
                     "player": Player.objects.get(source=BCP, source_id=player["id"]),
                     "source_json": player,
-                    "army_source_id": army_id,
+                    "army_source_id": army_source_id,
+                    "army_id": army_id,
                 }
                 Participant.objects.update_or_create(
                     event=event,
