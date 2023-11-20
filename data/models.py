@@ -50,17 +50,16 @@ GHB_2023 = 2023
 GHB_2022S1_STRATEGIES = [
     "Tame the Land",
     "Defend What's Ours",
-    "Take What's Theirs",
     "No Place for the Weak",
     "Demonstration of Strength",
     "Show of Dominance",
+    "Take What",
 ]
 
 
 GHB_2022S2_STRATEGIES = [
     "Tame the Land",
     "Defend What's Ours",
-    "Take What's Theirs",
     "Stake a Claim",
     "Survivor's Instinct",
     "The Day is Ours!",
@@ -146,10 +145,10 @@ class List(models.Model):
     player_updated_at = models.DateTimeField(null=True)
     raw_list = models.TextField()
     faction = models.CharField(
-        max_length=100, null=True, choices=zip(aos_factions, aos_factions)
+        max_length=255, null=True, choices=zip(aos_factions, aos_factions)
     )
-    subfaction = models.CharField(max_length=100, null=True)
-    grand_strategy = models.CharField(max_length=100, null=True)
+    subfaction = models.CharField(max_length=255, null=True)
+    grand_strategy = models.CharField(max_length=255, null=True)
     regexp_parsed = models.BooleanField(default=False)
     gpt_parsed = models.BooleanField(default=False)
     gpt_parse_error = models.JSONField(null=True)

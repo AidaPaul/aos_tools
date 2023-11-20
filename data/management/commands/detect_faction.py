@@ -2,6 +2,7 @@ import re
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
+from django.db import DataError
 from django.db.models import Q
 import json
 
@@ -78,10 +79,11 @@ class Command(BaseCommand):
     help = "Detect Faction and Subfaction for downloaded lists"
 
     def handle(self, *args, **options):
-        headers = settings.BCP_HEADERS
-        for army_list in List.objects.exclude(Q(raw_list="")).filter(
+        army_lists = List.objects.exclude(Q(raw_list="")).filter(
             Q(faction__isnull=True)
-        ):
+        )
+        self.stdout.write(f"Detecting for {army_lists.count()} lists")
+        for army_list in army_lists:
             list_text = army_list.raw_list
             prompt = f"""
 For given list of Age of Sigmar please fill in the following fields and return it as json document. Fields: `faction, subfaction` and unify them to original names from the game. Return only the json document, with no wrapper, markings or other commentary. If there are multiple lists, only process the first one, never return more than 1 set of requested data. Remove any text from it that's not directly the subfaction or faction.
@@ -128,7 +130,6 @@ list:
             subfaction = None
             grand_strategy = None
             try:
-                raise ValueError("Fallback to gpt")
                 details = extract_army_details(list_text)
                 faction = details["faction"]
                 subfaction = details["subfaction"]
@@ -145,7 +146,7 @@ list:
                 army_list.regexp_parsed = True
                 army_list.save()
                 continue
-            except ValueError:
+            except (ValueError, DataError) as e:
                 self.stderr.write(
                     self.style.ERROR(
                         f"Fallback to gpt to detect army details {army_list.source_id}"
@@ -179,9 +180,17 @@ list:
                     )
                 )
                 continue
-            army_list.save()
-            army_list.gpt_parsed = True
-            army_list.save()
+            try:
+                army_list.save()
+                army_list.gpt_parsed = True
+                army_list.save()
+            except DataError as e:
+                self.stderr.write(
+                    self.style.ERROR(
+                        f"Failed to save faction for {army_list.source_id} error: {e}"
+                    )
+                )
+                continue
             self.stdout.write(
                 self.style.SUCCESS(
                     f"Successfully detected faction for {army_list.source_id}"
