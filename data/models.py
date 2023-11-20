@@ -49,7 +49,6 @@ GHB_2023 = 2023
 
 GHB_2022S1_STRATEGIES = [
     "Tame the Land",
-    "Defend What's Ours",
     "No Place for the Weak",
     "Demonstration of Strength",
     "Show of Dominance",
@@ -59,7 +58,6 @@ GHB_2022S1_STRATEGIES = [
 
 GHB_2022S2_STRATEGIES = [
     "Tame the Land",
-    "Defend What's Ours",
     "Stake a Claim",
     "Survivor's Instinct",
     "The Day is Ours!",
