@@ -15,6 +15,67 @@ DRAW = 1
 LOSS = 0
 
 
+aos_factions = [
+    "Stormcast Eternals",
+    "Daughters of Khaine",
+    "Fyreslayers",
+    "Idoneth Deepkin",
+    "Kharadron Overlords",
+    "Lumineth Realm-lords",
+    "Sylvaneth",
+    "Seraphon",
+    "Cities of Sigmar",
+    "Slaves to Darkness",
+    "Blades of Khorne",
+    "Disciples of Tzeentch",
+    "Hedonites of Slaanesh",
+    "Maggotkin of Nurgle",
+    "Skaven",
+    "Beasts of Chaos",
+    "Legion of Azgorh",
+    "Flesh-eater Courts",
+    "Nighthaunt",
+    "Ossiarch Bonereapers",
+    "Soulblight Gravelords",
+    "Orruk Warclans",
+    "Gloomspite Gitz",
+    "Sons of Behemat",
+]
+
+GHB_2022S1 = 20221
+GHB_2022S2 = 20222
+GHB_2023 = 2023
+
+
+GHB_2022S1_STRATEGIES = [
+    "Tame the Land",
+    "Defend What's Ours",
+    "Take What's Theirs",
+    "No Place for the Weak",
+    "Demonstration of Strength",
+    "Show of Dominance",
+]
+
+
+GHB_2022S2_STRATEGIES = [
+    "Tame the Land",
+    "Defend What's Ours",
+    "Take What's Theirs",
+    "Stake a Claim",
+    "Survivor's Instinct",
+    "The Day is Ours!",
+]
+
+GHB_2023_STRATEGIES = [
+    "Control the Nexus",
+    "Spellcasting Savant",
+    "Slaughter of Sorcery",
+    "Barren Icescape",
+    "Overshadow",
+    "Magic Made Manifest",
+]
+
+
 class Location(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
@@ -37,6 +98,7 @@ class Event(models.Model):
     players_count = models.IntegerField(null=True)
     points_limit = models.IntegerField(null=True)
     rounds = models.IntegerField(default=5)
+    season = models.IntegerField(null=True)
 
     def __str__(self):
         return self.name
@@ -83,6 +145,11 @@ class List(models.Model):
     player_created_at = models.DateTimeField(null=True)
     player_updated_at = models.DateTimeField(null=True)
     raw_list = models.TextField()
+    faction = models.CharField(
+        max_length=100, null=True, choices=zip(aos_factions, aos_factions)
+    )
+    subfaction = models.CharField(max_length=100, null=True)
+    grand_strategy = models.CharField(max_length=100, null=True)
 
 
 class Pairing(models.Model):
