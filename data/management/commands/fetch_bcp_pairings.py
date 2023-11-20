@@ -18,6 +18,8 @@ class Command(BaseCommand):
         ):
             round = 0
             max_rounds = event.rounds
+            if max_rounds is None:
+                continue
             while round <= max_rounds:
                 round += 1
                 url = f"https://prod-api.bestcoastpairings.com/pairings?limit=100&eventId={event.source_id}&round={round}&pairingType=Pairing&expand%5B%5D=player1&expand%5B%5D=player2&expand%5B%5D=player1Game&expand%5B%5D=player2Game"

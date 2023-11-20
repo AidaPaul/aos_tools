@@ -97,7 +97,7 @@ class Event(models.Model):
     photo_url = models.URLField(null=True)
     players_count = models.IntegerField(null=True)
     points_limit = models.IntegerField(null=True)
-    rounds = models.IntegerField(default=5)
+    rounds = models.IntegerField(default=5, null=True)
     season = models.IntegerField(null=True)
 
     def __str__(self):
@@ -175,3 +175,6 @@ class Pairing(models.Model):
     )
     source_id = models.CharField(max_length=100)
     source_json = models.JSONField()
+    regexp_parsed = models.BooleanField(default=False)
+    gpt_parsed = models.BooleanField(default=False)
+    gpt_parse_error = models.BooleanField(default=False)
