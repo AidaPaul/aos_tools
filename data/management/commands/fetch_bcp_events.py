@@ -12,8 +12,19 @@ class Command(BaseCommand):
         year = 2023
         limit = 100
         headers = settings.BCP_HEADERS
+        inner_iter = 1
         while month <= 12:
-            url = f"https://prod-api.bestcoastpairings.com/events?limit={limit}&startDate={year}-{month:02d}-01T00%3A00%3A00Z&endDate={year}-{month:02d}-31T00%3A00%3A00Z&sortKey=eventDate&sortAscending=true&gameType=4"
+            if inner_iter == 1:
+                start_day_range = 1
+                end_day_range = 11
+                url = f"https://prod-api.bestcoastpairings.com/events?limit={limit}&startDate={year}-{month:02d}-{start_day_range}T00%3A00%3A00Z&endDate={year}-{month:02d}-{end_day_range}T00%3A00%3A00Z&sortKey=eventDate&sortAscending=true&gameType=4"
+            elif inner_iter == 2:
+                start_day_range = 11
+                end_day_range = 21
+                url = f"https://prod-api.bestcoastpairings.com/events?limit={limit}&startDate={year}-{month:02d}-{start_day_range}T00%3A00%3A00Z&endDate={year}-{month:02d}-{end_day_range}T00%3A00%3A00Z&sortKey=eventDate&sortAscending=true&gameType=4"
+            elif inner_iter == 3:
+                url = f"https://prod-api.bestcoastpairings.com/events?limit={limit}&startDate={year}-{month:02d}-21T00%3A00%3A00Z&endDate={year}-{month+1:02d}-01T00%3A00%3A00Z&sortKey=eventDate&sortAscending=true&gameType=4"
+
             response = requests.get(url, headers=headers)
             if response.status_code != 200:
                 raise CommandError(
