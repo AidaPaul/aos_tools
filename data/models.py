@@ -150,6 +150,9 @@ class List(models.Model):
     )
     subfaction = models.CharField(max_length=100, null=True)
     grand_strategy = models.CharField(max_length=100, null=True)
+    regexp_parsed = models.BooleanField(default=False)
+    gpt_parsed = models.BooleanField(default=False)
+    gpt_parse_error = models.JSONField(null=True)
 
 
 class Pairing(models.Model):
@@ -175,6 +178,3 @@ class Pairing(models.Model):
     )
     source_id = models.CharField(max_length=100)
     source_json = models.JSONField()
-    regexp_parsed = models.BooleanField(default=False)
-    gpt_parsed = models.BooleanField(default=False)
-    gpt_parse_error = models.BooleanField(default=False)

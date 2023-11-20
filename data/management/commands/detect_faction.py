@@ -25,12 +25,15 @@ def ask_chat_gpt(prompt):
         "Authorization": f"Bearer {settings.OPENAI_API_KEY}",
     }
 
-    try:
-        response = requests.post(
-            url, data=json.dumps(payload), headers=headers, timeout=10
-        )
-    except requests.exceptions.Timeout:
-        return "Timeout"
+    success = False
+    while success is False:
+        try:
+            response = requests.post(
+                url, data=json.dumps(payload), headers=headers, timeout=10
+            )
+            success = True
+        except requests.exceptions.Timeout:
+            pass
     if response.status_code == 200:
         data = response.json()
         print(f"Response: {data}")
@@ -139,6 +142,8 @@ list:
                         f"Successfully regexpec faction for {army_list.source_id}"
                     )
                 )
+                army_list.regexp_parsed = True
+                army_list.save()
                 continue
             except ValueError:
                 self.stderr.write(
@@ -149,12 +154,14 @@ list:
             response = ask_chat_gpt(prompt)
             try:
                 payload = json.loads(response)
-            except json.decoder.JSONDecodeError:
+            except json.decoder.JSONDecodeError as e:
                 self.stderr.write(
                     self.style.ERROR(
                         f"Failed to parse response for {army_list.source_id}"
                     )
                 )
+                army_list.gpt_parsed = True
+                army_list.gpt_parse_error = e
                 continue
             try:
                 army_list.faction = payload["faction"]
@@ -172,6 +179,8 @@ list:
                     )
                 )
                 continue
+            army_list.save()
+            army_list.gpt_parsed = True
             army_list.save()
             self.stdout.write(
                 self.style.SUCCESS(
