@@ -121,9 +121,17 @@ class Command(BaseCommand):
                                 "participant": player2,
                             },
                         )[0]
-                    Pairing.objects.update_or_create(
-                        source_id=pairing["pairingId"], defaults=pairing_dict
-                    )
+                    try:
+                        Pairing.objects.update_or_create(
+                            source_id=pairing["pairingId"], defaults=pairing_dict
+                        )
+                    except Exception as e:
+                        self.stderr.write(
+                            self.style.ERROR(
+                                f"Failed to save pairing for {event.name}, error: {e}"
+                            )
+                        )
+                        continue
                 self.stdout.write(
                     self.style.SUCCESS(f"Successfully fetched data for {event.name}")
                 )
