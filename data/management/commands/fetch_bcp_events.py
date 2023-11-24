@@ -1,3 +1,5 @@
+from copy import copy
+
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from data.models import Event, BCP
@@ -13,24 +15,16 @@ class Command(BaseCommand):
         limit = 100
         headers = settings.BCP_HEADERS
         inner_iter = 1
-        while month <= 12:
-            if inner_iter == 1:
-                start_day_range = 1
-                end_day_range = 11
-                url = f"https://prod-api.bestcoastpairings.com/events?limit={limit}&startDate={year}-{month:02d}-{start_day_range}T00%3A00%3A00Z&endDate={year}-{month:02d}-{end_day_range}T00%3A00%3A00Z&sortKey=eventDate&sortAscending=true&gameType=4"
-            elif inner_iter == 2:
-                start_day_range = 11
-                end_day_range = 21
-                url = f"https://prod-api.bestcoastpairings.com/events?limit={limit}&startDate={year}-{month:02d}-{start_day_range}T00%3A00%3A00Z&endDate={year}-{month:02d}-{end_day_range}T00%3A00%3A00Z&sortKey=eventDate&sortAscending=true&gameType=4"
-            elif inner_iter == 3:
-                url = f"https://prod-api.bestcoastpairings.com/events?limit={limit}&startDate={year}-{month:02d}-21T00%3A00%3A00Z&endDate={year}-{month+1:02d}-01T00%3A00%3A00Z&sortKey=eventDate&sortAscending=true&gameType=4"
-
-            response = requests.get(url, headers=headers)
-            if response.status_code != 200:
-                raise CommandError(
-                    f"Failed to fetch data for {year}-{month:02d}, code: {response.status_code} body response: {response.text}"
-                )
-            data = response.json()
+        url = f"https://prod-api.bestcoastpairings.com/events?limit={limit}&startDate={year}-{month:02d}-01T00%3A00%3A00Z&endDate={year+1}-{month:02d}-01T00%3A00%3A00Z&sortKey=eventDate&sortAscending=true&gameType=4"
+        base_url = copy(url)
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise CommandError(
+                f"Failed to fetch data for {year}-{month:02d}, code: {response.status_code} body response: {response.text}"
+            )
+        data = response.json()
+        last_key = None
+        while "nextKey" in response.json():
             for event in data["data"]:
                 event_dict = {
                     "source": BCP,
@@ -41,6 +35,11 @@ class Command(BaseCommand):
                     "end_date": event["eventEndDate"],
                     "rounds": event["numberOfRounds"],
                 }
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"Successfully fetched data for {event['name']}, {event['eventDate']}"
+                    )
+                )
                 if "numTickets" in event:
                     event_dict["players_count"] = event["numTickets"]
                 if "pointsValue" in event:
@@ -48,7 +47,20 @@ class Command(BaseCommand):
                 Event.objects.update_or_create(
                     source=BCP, source_id=event["id"], defaults=event_dict
                 )
+            next_key = data["nextKey"]
+            if next_key == last_key:
+                self.stdout.write(self.style.SUCCESS(f"Finished fetching data"))
+                break
+            last_key = next_key
             self.stdout.write(
-                self.style.SUCCESS(f"Successfully fetched data for {year}-{month:02d}")
+                self.style.SUCCESS(
+                    f"Successfully fetched batch of data, next key: {next_key}"
+                )
             )
-            month += 1
+            url = f"{base_url}&nextKey={next_key}"
+            response = requests.get(url, headers=headers)
+            if response.status_code != 200:
+                raise CommandError(
+                    f"Failed to fetch data for {year}-{month:02d}, code: {response.status_code} body response: {response.text}"
+                )
+            data = response.json()
