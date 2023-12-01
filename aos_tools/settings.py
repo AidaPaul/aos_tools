@@ -23,9 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-4qyvookw)ev%7yvz+og3cx)9u*a-3*mpge1%3o+2fz0%%cu3#u"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["aida.ngrok.app", "127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ["https://aida.ngrok.app"]
 
 
 # Application definition

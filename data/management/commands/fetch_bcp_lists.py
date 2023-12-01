@@ -12,7 +12,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         headers = settings.BCP_HEADERS
         for list in List.objects.filter(
-            Q(source_id__isnull=False) & Q(raw_list__isnull=True)
+            Q(source_id__isnull=False) & (Q(raw_list__isnull=True) | Q(raw_list=""))
         ):
             url = f"https://prod-api.bestcoastpairings.com/armylists/{list.source_id}"
             response = requests.get(url, headers=headers)
