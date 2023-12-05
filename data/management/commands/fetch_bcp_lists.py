@@ -11,9 +11,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         headers = settings.BCP_HEADERS
-        for list in List.objects.filter(
+        lists = List.objects.filter(
             Q(source_id__isnull=False) & (Q(raw_list__isnull=True) | Q(raw_list=""))
-        ):
+        )
+        self.stdout.write(f"Fetching data for {lists.count()} lists")
+        for list in lists:
             url = f"https://prod-api.bestcoastpairings.com/armylists/{list.source_id}"
             response = requests.get(url, headers=headers)
             if response.status_code != 200:

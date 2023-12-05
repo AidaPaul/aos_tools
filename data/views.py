@@ -32,6 +32,8 @@ def export_pairings_as_csv(request):
             "event_name",
             "event_date",
             "event_end_date",
+            "event_country",
+            "event_online",
             "season",
             "player1_faction",
             "player1_subfaction",
@@ -53,6 +55,13 @@ def export_pairings_as_csv(request):
             if pairing.player2
             else ""
         )
+        event_country = (
+            pairing.event.source_json["country"] if pairing.event.source_json else ""
+        )
+        if "isOnlineEvent" in pairing.event.source_json:
+            event_online = pairing.event.source_json["isOnlineEvent"]
+        else:
+            event_online = False
         player1_list_faction = (
             pairing.player1_list.faction if pairing.player1_list else ""
         )
@@ -79,6 +88,8 @@ def export_pairings_as_csv(request):
                 pairing.event.name,
                 pairing.event.start_date,
                 pairing.event.end_date,
+                event_country,
+                event_online,
                 "2023",
                 player1_list_faction,
                 player1_list_subfaction,
