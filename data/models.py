@@ -72,11 +72,19 @@ GHB_2023_STRATEGIES = [
     "Magic Made Manifest",
 ]
 
+AOS = 0
+W40K = 1
+
+GAME_TYPES = [
+    (AOS, "Age of Sigmar"),
+    (W40K, "Warhammer 40k"),
+]
+
 
 class Location(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
+    name = models.CharField(max_length=255)
+    country = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
 
 
@@ -85,9 +93,9 @@ class Event(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     source = models.IntegerField(choices=event_sources)
-    source_id = models.CharField(max_length=100)
+    source_id = models.CharField(max_length=255)
     source_json = models.JSONField()
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=255)
     start_date = models.DateTimeField(null=True)
     end_date = models.DateTimeField(null=True)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True)
@@ -96,6 +104,7 @@ class Event(models.Model):
     points_limit = models.IntegerField(null=True)
     rounds = models.IntegerField(default=5, null=True)
     season = models.IntegerField(null=True)
+    game_type = models.IntegerField(choices=GAME_TYPES, null=True, default=AOS)
 
     def __str__(self):
         return self.name
@@ -117,7 +126,7 @@ class Player(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     source = models.IntegerField(choices=event_sources)
-    source_id = models.CharField(max_length=100)
+    source_id = models.CharField(max_length=255)
     source_json = models.JSONField()
 
 
@@ -127,8 +136,8 @@ class Participant(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     source_json = models.JSONField()
-    army_source_id = models.CharField(max_length=100, null=True)
-    army_id = models.CharField(max_length=100, null=True)
+    army_source_id = models.CharField(max_length=255, null=True)
+    army_id = models.CharField(max_length=255, null=True)
 
 
 class List(models.Model):
@@ -137,7 +146,7 @@ class List(models.Model):
     participant = models.ForeignKey(
         Participant, on_delete=models.CASCADE, related_name="list"
     )
-    source_id = models.CharField(max_length=100)
+    source_id = models.CharField(max_length=255)
     source_json = models.JSONField()
     player_created_at = models.DateTimeField(null=True)
     player_updated_at = models.DateTimeField(null=True)
@@ -173,5 +182,5 @@ class Pairing(models.Model):
     player2_list = models.ForeignKey(
         List, on_delete=models.CASCADE, null=True, related_name="player2_list"
     )
-    source_id = models.CharField(max_length=100)
+    source_id = models.CharField(max_length=255)
     source_json = models.JSONField()
