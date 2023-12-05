@@ -1,6 +1,9 @@
+import time
+
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
+from data.tasks import fetch_list
 
 from data.models import *
 import requests
@@ -9,27 +12,28 @@ import requests
 class Command(BaseCommand):
     help = "Fetch events from BCP"
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--celery",
+            action="store_true",
+            dest="celery",
+            default=False,
+            help="Use celery to fetch lists",
+        )
+
     def handle(self, *args, **options):
-        headers = settings.BCP_HEADERS
         lists = List.objects.filter(
             Q(source_id__isnull=False) & (Q(raw_list__isnull=True) | Q(raw_list=""))
         )
         self.stdout.write(f"Fetching data for {lists.count()} lists")
-        for list in lists:
-            url = f"https://prod-api.bestcoastpairings.com/armylists/{list.source_id}"
-            response = requests.get(url, headers=headers)
-            if response.status_code != 200:
-                self.stderr.write(
-                    self.style.ERROR(
-                        f"Failed to fetch data for {list.source_id}, code: {response.status_code} body response: {response.text}"
-                    )
-                )
-                continue
-            data = response.json()
-            list.source_json = data
-            if "armyListText" in data:
-                list.raw_list = data["armyListText"]
-            list.save()
-            self.stdout.write(
-                self.style.SUCCESS(f"Successfully fetched data for {list.source_id}")
-            )
+        tasks = []
+        for current_list in lists:
+            if options["celery"]:
+                tasks.append(fetch_list.delay(current_list.id))
+            else:
+                fetch_list(current_list.id)
+
+        if options["celery"]:
+            self.stdout.write(f"Started {len(tasks)} tasks")
+        else:
+            self.stdout.write(f"Finished fetching lists")

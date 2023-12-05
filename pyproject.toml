@@ -11,6 +11,12 @@ django = "^4.2.6"
 requests = "^2.31.0"
 pandas = "1.5.3"
 psycopg2 = "^2.9.9"
+celery = "^5.3.6"
+django-kombu = "^0.9.4"
+kombu = "^5.3.4"
+django-celery-results = "^2.5.1"
+flower = "^2.0.1"
+eventlet = "^0.33.3"
 
 
 [build-system]

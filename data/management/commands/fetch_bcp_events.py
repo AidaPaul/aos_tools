@@ -9,7 +9,6 @@ import requests
 class Command(BaseCommand):
     help = "Fetch events from BCP"
 
-    # add parameters
     def add_arguments(self, parser):
         parser.add_argument(
             "--game_type",
