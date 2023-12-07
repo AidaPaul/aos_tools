@@ -78,8 +78,11 @@ WSGI_APPLICATION = "aos_tools.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("POSTGRES_DB", "aos_tools"),
+        "USER": os.environ.get("POSTGRES_USER", "postgres"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
+        "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
     }
 }
 
@@ -124,3 +127,20 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+BROKER_URL = os.environ.get("RABBITMQ_URL", "amqp://guest:guest@localhost:5672/")
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+
+BCP_HEADERS = {
+    "Content-Type": "application/json",
+    "User-Agent": "Apache-HttpClient/4.5.14 (Java/17.0.9)",
+    "Accept-Encoding": "br,deflate,gzip,x-gzip",
+    "Client-id": os.environ.get("BCP_CLIENT_ID", ""),
+    "Authorization": os.environ.get("BCP_AUTHORIZATION", ""),
+    "Identity": os.environ.get("BCP_IDENTITY", ""),
+}
