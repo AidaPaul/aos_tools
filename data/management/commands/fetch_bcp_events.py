@@ -2,7 +2,7 @@ from copy import copy
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from data.models import Event, BCP, W40K
+from data.models import Event, BCP, W40K, BOLT_ACTION, AOS
 import requests
 
 
@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         month = 1
-        year = 2023
+        year = 2021
         limit = 100
         headers = settings.BCP_HEADERS
         game_type = options["game_type"]
@@ -40,8 +40,13 @@ class Command(BaseCommand):
                     "name": event["name"],
                     "start_date": event["eventDate"],
                     "end_date": event["eventEndDate"],
-                    "game_type": W40K,
                 }
+                if options["game_type"] == 1:
+                    event_dict["game_type"] = W40K
+                elif options["game_type"] == 4:
+                    event_dict["game_type"] = AOS
+                elif options["game_type"] == 11:
+                    event_dict["game_type"] = BOLT_ACTION
                 self.stdout.write(
                     self.style.SUCCESS(
                         f"Successfully fetched data for {event['name']}, {event['eventDate']}"
