@@ -1,8 +1,18 @@
 import csv
 
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
-from data.models import List, Event, Participant, Pairing, Player, W40K, AOS
+from data.models import (
+    List,
+    Event,
+    Participant,
+    Pairing,
+    Player,
+    W40K,
+    AOS,
+    BOLT_ACTION,
+)
 
 
 def raw_list(request, list_id):
