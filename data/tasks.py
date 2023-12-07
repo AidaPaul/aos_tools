@@ -23,7 +23,7 @@ def fetch_list(list_id: int):
     response = requests.get(url, headers=headers)
     if response.status_code != 200:
         raise Exception(
-            f"Failed to fetch data for {current_list.name}, code: {response.status_code} body response: {response.text}"
+            f"Failed to fetch data for {current_list.id}, code: {response.status_code} body response: {response.text}"
         )
     data = response.json()
     current_list.source_json = data

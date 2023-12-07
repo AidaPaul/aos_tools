@@ -22,8 +22,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         headers = settings.BCP_HEADERS
         events = (
-            Event.objects.filter(source=BCP).annotate(pairings_count=Count("pairings"))
-            # .exclude(pairings_count__gt=2)
+            Event.objects.filter(source=BCP)
+            .annotate(pairings_count=Count("pairings"))
+            .exclude(pairings_count__gt=2)
         )
         self.stdout.write(f"Fetching data for {events.count()} events")
         tasks = []

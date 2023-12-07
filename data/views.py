@@ -2,7 +2,7 @@ import csv
 
 from django.http import HttpResponse
 from django.shortcuts import render
-from data.models import List, Event, Participant, Pairing, Player
+from data.models import List, Event, Participant, Pairing, Player, W40K, AOS
 
 
 def raw_list(request, list_id):
