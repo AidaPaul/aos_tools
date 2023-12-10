@@ -20,9 +20,11 @@ def raw_list(request, list_id):
     return HttpResponse(list.raw_list.replace("\n", "<br>"))
 
 
-def export_pairings_as_csv(request):
+def export_pairings_as_csv(request, game_type: int = AOS):
     pairings = Pairing.objects.filter(
-        event__start_date__range=["2023-07-15", "2023-12-31"], event__rounds__in=[3, 5]
+        Q(event__start_date__range=["2023-07-15", "2023-12-31"])
+        & Q(event__rounds__in=[3, 5])
+        & Q(event__game_type=game_type)
     ).order_by("event__name", "-event__start_date", "round", "id")
 
     response = HttpResponse(content_type="text/csv")
