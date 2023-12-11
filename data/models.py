@@ -42,6 +42,38 @@ aos_factions = [
     "Sons of Behemat",
 ]
 
+w40k_factions = [
+    "Adepta Sororitas",
+    "Adeptus Custodes",
+    "Adeptus Mechanicus",
+    "Aeldari",
+    "Astra Militarum",
+    "Black Templars",
+    "Blood Angels",
+    "Chaos Daemons",
+    "Chaos Knights",
+    "Chaos Space Marines",
+    "Chaos Titan Legions",
+    "Dark Angels",
+    "Death Guard",
+    "Deathwatch",
+    "Drukhari",
+    "Genestealer Cults",
+    "Grey Knights",
+    "Imperial Agents",
+    "Imperial Knights",
+    "Leagues of Votann",
+    "Necrons",
+    "Orks",
+    "Space Marines",
+    "Space Wolves",
+    "Thousand Sons",
+    "Titan Legions",
+    "Tyrandis",
+    "T'au Empire",
+    "World Eaters",
+]
+
 GHB_2022S1 = 20221
 GHB_2022S2 = 20222
 GHB_2023 = 2023
