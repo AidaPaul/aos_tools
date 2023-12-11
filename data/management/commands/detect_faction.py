@@ -1,13 +1,13 @@
+import json
 import re
 
+import requests
 from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.db import DataError
 from django.db.models import Q, F
-import json
 
 from data.models import *
-import requests
 
 
 def ask_chat_gpt(prompt):

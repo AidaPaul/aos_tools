@@ -1,12 +1,8 @@
-import time
-
-from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.db.models import Q
-from data.tasks import fetch_list
 
 from data.models import *
-import requests
+from data.tasks import fetch_list
 
 
 class Command(BaseCommand):

@@ -1,16 +1,7 @@
-import requests
 from celery import shared_task
 from django.conf import settings
 
-from data.models import List
-
 headers = settings.BCP_HEADERS
-
-from celery.contrib import rdb
-
-from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
-from django.db.models import Q, Count
 
 from data.models import *
 import requests

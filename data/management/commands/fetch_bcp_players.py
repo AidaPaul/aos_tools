@@ -1,7 +1,8 @@
-from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
-from data.models import *
 import requests
+from django.conf import settings
+from django.core.management.base import BaseCommand
+
+from data.models import *
 
 
 class Command(BaseCommand):

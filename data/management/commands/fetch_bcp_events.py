@@ -1,9 +1,10 @@
 from copy import copy
 
+import requests
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
+
 from data.models import Event, BCP, W40K, BOLT_ACTION, AOS
-import requests
 
 
 class Command(BaseCommand):

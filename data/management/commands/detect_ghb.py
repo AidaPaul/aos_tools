@@ -1,13 +1,6 @@
-import re
-
-from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
-from django.db import DataError
-from django.db.models import Q
-import json
+from django.core.management.base import BaseCommand
 
 from data.models import *
-import requests
 
 
 class Command(BaseCommand):

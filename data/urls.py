@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 
 from data.views import raw_list, export_pairings_as_csv
 

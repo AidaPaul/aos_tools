@@ -1,10 +1,9 @@
 from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
-from django.db.models import Q, Count
+from django.core.management.base import BaseCommand
+from django.db.models import Count
 
 from data.models import *
 from data.tasks import fetch_pairings_for_event
-import requests
 
 
 class Command(BaseCommand):
