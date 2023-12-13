@@ -170,6 +170,7 @@ def extract_faction_details_for_aos(army_list_id: int):
 def extract_faction_details_for_40k(id):
     army_list = List.objects.get(id=id)
     list_text = army_list.raw_list
+    list_text = list_text.replace("’", "'")
     faction_in_text = next(
         (faction for faction in w40k_factions if faction in list_text), None
     )
