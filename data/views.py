@@ -7,6 +7,7 @@ from data.models import (
     List,
     Pairing,
     AOS,
+    BCP,
 )
 
 
@@ -18,7 +19,7 @@ def raw_list(request, list_id):
 def export_pairings_as_csv(request, game_type: int = AOS):
     pairings = Pairing.objects.filter(
         Q(event__start_date__range=["2023-07-01", "2023-12-31"])
-        & Q(event__rounds__in=[3, 5])
+        & Q(event__rounds__in=[3, 5, 8])
         & Q(event__game_type=game_type)
     ).order_by("event__name", "-event__start_date", "round", "id")
 
@@ -48,20 +49,33 @@ def export_pairings_as_csv(request, game_type: int = AOS):
             "player2_subfaction",
             "player1_list_url",
             "player2_list_url",
+            "source",
         ]
     )
 
     for pairing in pairings:
-        player1_name = (
-            f"{pairing.player1.player.source_json['firstName']} {pairing.player1.player.source_json['lastName']}"
-            if pairing.player1
-            else ""
-        )
-        player2_name = (
-            f"{pairing.player2.player.source_json['firstName']} {pairing.player2.player.source_json['lastName']}"
-            if pairing.player2
-            else ""
-        )
+        if pairing.event.source == BCP:
+            player1_name = (
+                f"{pairing.player1.player.source_json['firstName']} {pairing.player1.player.source_json['lastName']}"
+                if pairing.player1
+                else ""
+            )
+            player2_name = (
+                f"{pairing.player2.player.source_json['firstName']} {pairing.player2.player.source_json['lastName']}"
+                if pairing.player2
+                else ""
+            )
+        else:
+            player1_name = (
+                pairing.player1.player.source_json["playerName"]
+                if pairing.player1
+                else ""
+            )
+            player2_name = (
+                pairing.player2.player.source_json["playerName"]
+                if pairing.player2
+                else ""
+            )
         event_country = (
             pairing.event.source_json["country"] if pairing.event.source_json else ""
         )
@@ -104,6 +118,7 @@ def export_pairings_as_csv(request, game_type: int = AOS):
                 player2_list_subfaction,
                 pairing.player1_list.raw_list if pairing.player1_list else "",
                 pairing.player2_list.raw_list if pairing.player2_list else "",
+                "bcp" if pairing.event.source == BCP else "snl",
             ]
         )
 

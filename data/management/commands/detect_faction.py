@@ -58,6 +58,9 @@ def regexp_army_details_aos(text):
     else:
         raise ValueError("Faction not detected in the input text.")
 
+    if faction not in aos_factions:
+        raise ValueError(f"Faction {faction} not recognized.")
+
     if subfaction_match:
         subfaction = subfaction_match.group(2).strip()
     else:
@@ -119,6 +122,10 @@ def extract_faction_details_for_aos(army_list_id: int):
     try:
         details = regexp_army_details_aos(list_text)
         faction = details["faction"]
+        if "\t" in faction:
+            faction = faction.split("\t")[0]
+        if " - " in faction:
+            faction = faction.split(" - ")[0]
         subfaction = details["subfaction"]
         grand_strategy = details["grand_strategy"]
         army_list.faction = faction
@@ -136,12 +143,14 @@ def extract_faction_details_for_aos(army_list_id: int):
             f"Failed to detect faction for {army_list.source_id} error: {e} using regex"
         )
     response = ask_chat_gpt(prompt)
+    payload = None
     try:
         payload = json.loads(response.replace("```", "").replace("json", ""))
     except json.decoder.JSONDecodeError as e:
         print(f"Failed to decode json for {army_list.source_id} error: {e}")
         army_list.gpt_parsed = True
         army_list.gpt_parse_error = e
+        return False
     try:
         army_list.faction = payload["faction"]
         army_list.subfaction = payload["subfaction"]
@@ -151,7 +160,7 @@ def extract_faction_details_for_aos(army_list_id: int):
             army_list.subfaction = None
         if "grand_strategy" in payload:
             army_list.grand_strategy = payload["grand_strategy"]
-    except KeyError:
+    except KeyError as e:
         print(
             f"Failed to detect faction for {army_list.source_id} error: {e} using gpt"
         )

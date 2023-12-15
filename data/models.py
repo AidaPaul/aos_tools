@@ -4,6 +4,7 @@ from django.db import models
 
 BCP = 0
 TSN = 1
+SNL = 2
 
 event_sources = (
     (BCP, "BCP"),
