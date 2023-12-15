@@ -27,13 +27,13 @@ def fetch_list(list_id: int):
 @shared_task()
 def fetch_pairings_for_event(event_id: int):
     event = Event.objects.get(id=event_id)
-    round = 0
+    current_round = 0
     max_rounds = event.rounds
     if max_rounds is None:
         return
-    while round <= max_rounds:
-        round += 1
-        url = f"https://prod-api.bestcoastpairings.com/pairings?limit=100&eventId={event.source_id}&round={round}&pairingType=Pairing&expand%5B%5D=player1&expand%5B%5D=player2&expand%5B%5D=player1Game&expand%5B%5D=player2Game"
+    while current_round <= max_rounds:
+        current_round += 1
+        url = f"https://prod-api.bestcoastpairings.com/pairings?limit=100&eventId={event.source_id}&round={current_round}&pairingType=Pairing&expand%5B%5D=player1&expand%5B%5D=player2&expand%5B%5D=player1Game&expand%5B%5D=player2Game"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
             raise Exception(
@@ -49,7 +49,7 @@ def fetch_pairings_for_event(event_id: int):
                 "source_id": pairing["id"],
                 "source_json": pairing,
                 "event": event,
-                "round": round,
+                "round": current_round,
             }
             for player in ["player1", "player2"]:
                 player_dict = {
@@ -119,4 +119,4 @@ def fetch_pairings_for_event(event_id: int):
                 )
             except Exception as e:
                 continue
-        return True
+    return True

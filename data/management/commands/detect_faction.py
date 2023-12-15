@@ -137,7 +137,7 @@ def extract_faction_details_for_aos(army_list_id: int):
         )
     response = ask_chat_gpt(prompt)
     try:
-        payload = json.loads(response)
+        payload = json.loads(response.replace("```", "").replace("json", ""))
     except json.decoder.JSONDecodeError as e:
         print(f"Failed to decode json for {army_list.source_id} error: {e}")
         army_list.gpt_parsed = True
@@ -193,7 +193,8 @@ class Command(BaseCommand):
             List.objects.exclude(Q(raw_list=""))
             .filter(Q(faction__isnull=True))
             .annotate(game_type=F("participant__event__game_type"))
-            .filter(game_type__in=[W40K])
+            .filter(game_type__in=[AOS])
+            .filter(~Q(raw_list="") | ~Q(raw_list__isnull=True))
         )
         self.stdout.write(f"Detecting for {army_lists.count()} lists")
         for army_list in army_lists:
