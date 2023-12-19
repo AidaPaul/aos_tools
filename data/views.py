@@ -21,12 +21,16 @@ def export_pairings_as_csv(request, game_type: int = AOS):
         Q(event__start_date__range=["2023-07-01", "2023-12-31"])
         & Q(event__rounds__in=[3, 5, 8])
         & Q(event__game_type=game_type)
+        & Q(event__source=BCP)
     ).order_by("event__name", "-event__start_date", "round", "id")
 
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = 'attachment; filename="pairings.csv"'
 
-    writer = csv.writer(response)
+    writer = csv.writer(
+        response,
+        quoting=csv.QUOTE_NONNUMERIC,
+    )
     writer.writerow(
         [
             "pairing_id",
@@ -95,6 +99,11 @@ def export_pairings_as_csv(request, game_type: int = AOS):
         player2_list_subfaction = (
             pairing.player2_list.subfaction if pairing.player2_list else ""
         )
+
+        if pairing.player1_list and len(pairing.player1_list.raw_list) > 10000:
+            pairing.player1_list.raw_list = "List too long"
+        if pairing.player2_list and len(pairing.player2_list.raw_list) > 10000:
+            pairing.player2_list.raw_list = "List too long"
 
         writer.writerow(
             [

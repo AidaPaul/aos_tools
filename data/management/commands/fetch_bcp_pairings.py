@@ -21,8 +21,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         events = (
             Event.objects.filter(source=BCP)
-            .filter(game_type__in=[AOS])
-            .filter(start_date__gte="2023-07-01")
+            .filter(game_type__in=[W40K])
+            .filter(start_date__gte="2023-11-01")
         )
         self.stdout.write(f"Fetching data for {events.count()} events")
         tasks = []

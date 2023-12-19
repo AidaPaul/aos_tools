@@ -70,10 +70,31 @@ w40k_factions = [
     "Space Wolves",
     "Thousand Sons",
     "Titan Legions",
-    "Tyrandis",
+    "Tyranids",
     "T'au Empire",
     "World Eaters",
 ]
+
+w40k_marines = [
+    "Adeptus Astares",
+    "Adeptus Astartes",
+    "Ultramarines",
+    "Iron Fist",
+    "Imperial Fist",
+    "Imperial Fists",
+    "Black Templars",
+    "Iron Hands",
+    "Blood Angels",
+    "Dark Angels",
+    "Space Wolves",
+]
+w40k_chaos_space_marines = [
+    "Black Legion",
+    "Death Guard",
+    "Thousand Sons",
+    "World Eaters",
+]
+w40k_dark_angel = ["Deathwing", "Ravenwing"]
 
 GHB_2022S1 = 20221
 GHB_2022S2 = 20222

@@ -10,6 +10,9 @@ from django.db.models import Q, F
 from data.models import *
 
 
+failed_factions = {}
+
+
 def ask_chat_gpt(prompt):
     url = "https://api.openai.com/v1/chat/completions"
     payload = {
@@ -181,8 +184,55 @@ def extract_faction_details_for_40k(id):
     list_text = army_list.raw_list
     list_text = list_text.replace("’", "'")
     faction_in_text = next(
-        (faction for faction in w40k_factions if faction in list_text), None
+        (faction for faction in w40k_factions if faction.lower() in list_text.lower()),
+        None,
     )
+    if not faction_in_text:
+        if "Adeptas Sororitas".lower() in list_text.lower():
+            faction_in_text = "Adepta Sororitas"
+        elif "Chaos Demons".lower() in list_text.lower():
+            faction_in_text = "Chaos Daemons"
+        elif "Termaguants".lower() in list_text.lower():
+            faction_in_text = "Tyranids"
+        elif "IG" in list_text:
+            faction_in_text = "Astra Militarum"
+        elif "Genestealer Cult".lower() in list_text.lower():
+            faction_in_text = "Genestealer Cults"
+        else:
+            faction_in_text = next(
+                (
+                    faction
+                    for faction in w40k_marines
+                    if faction.lower() in list_text.lower()
+                ),
+                None,
+            )
+            if faction_in_text:
+                faction_in_text = "Space Marines"
+    if not faction_in_text:
+        print(
+            f"Failed to detect faction for {army_list.source_id} using text, assigning from user selection"
+        )
+        if "armyName" in army_list.source_json:
+            selected_army = army_list.source_json["armyName"]
+            if selected_army in w40k_factions:
+                faction_in_text = selected_army
+            elif selected_army in w40k_marines:
+                faction_in_text = "Space Marines"
+            elif selected_army in w40k_chaos_space_marines:
+                faction_in_text = "Chaos Space Marines"
+            elif selected_army in w40k_dark_angel:
+                faction_in_text = "Dark Angels"
+            elif "Astra Militarum".lower() == selected_army.lower():
+                faction_in_text = "Astra Militarum"
+            elif "GeneStealer Cult".lower() == selected_army.lower():
+                faction_in_text = "Genestealer Cults"
+            else:
+                if selected_army not in failed_factions:
+                    failed_factions[selected_army] = 1
+                else:
+                    failed_factions[selected_army] += 1
+                faction_in_text = None
     if faction_in_text:
         army_list.faction = faction_in_text
         army_list.save()
@@ -201,8 +251,10 @@ class Command(BaseCommand):
         army_lists = (
             List.objects.exclude(Q(raw_list=""))
             .filter(Q(faction__isnull=True))
+            .annotate(event_date=F("participant__event__start_date"))
             .annotate(game_type=F("participant__event__game_type"))
-            .filter(game_type__in=[AOS])
+            .filter(game_type__in=[W40K])
+            .filter(event_date__gte="2023-07-01")
             .filter(~Q(raw_list="") | ~Q(raw_list__isnull=True))
         )
         self.stdout.write(f"Detecting for {army_lists.count()} lists")
@@ -211,3 +263,4 @@ class Command(BaseCommand):
                 extract_faction_details_for_aos(army_list.id)
             elif army_list.game_type == W40K:
                 extract_faction_details_for_40k(army_list.id)
+        print(failed_factions)
