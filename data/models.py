@@ -86,8 +86,8 @@ w40k_marines = [
     "Iron Hands",
     "Blood Angels",
     "Dark Angels",
-    "Space Wolves",
 ]
+
 w40k_chaos_space_marines = [
     "Black Legion",
     "Death Guard",
