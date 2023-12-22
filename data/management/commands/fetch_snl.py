@@ -125,6 +125,8 @@ def store_tournaments(tournaments):
         source_id = tournament["tournamentID"]
         source_json = tournament
 
+        if Event.objects.filter(source=source, source_id=source_id).exists():
+            continue
         event, _ = Event.objects.update_or_create(
             source=source,
             source_id=source_id,
@@ -134,6 +136,7 @@ def store_tournaments(tournaments):
             points_limit=2000,
             rounds=5,
         )
+        print(f"Stored tournament {event.name}")
 
 
 def store_players(players, tournament_id):
@@ -142,9 +145,12 @@ def store_players(players, tournament_id):
         source_id = player["registrationID"]
         source_json = player
 
-        player_instance, _ = Player.objects.update_or_create(
-            source=source, source_id=source_id, source_json=source_json
-        )
+        if not Player.objects.filter(source=source, source_id=source_id).exists():
+            player_instance, _ = Player.objects.update_or_create(
+                source=source, source_id=source_id, source_json=source_json
+            )
+        else:
+            player_instance = Player.objects.get(source=source, source_id=source_id)
 
         participant, _ = Participant.objects.get_or_create(
             event=Event.objects.get(source_id=tournament_id),
@@ -158,12 +164,13 @@ def store_players(players, tournament_id):
             source_json=player,
             raw_list=str(player["listPlainText"]),
         )
+        print(f"Stored player {player['playerName']}")
 
 
 def store_pairings(pairings, tournament_id):
     for pairing in pairings:
         source = SNL
-        source_id = pairing["roundNumber"]
+        source_id = pairing["tournamentID"]
         source_json = pairing
 
         try:
@@ -196,6 +203,8 @@ def store_pairings(pairings, tournament_id):
             event__source_id=tournament_id,
             round=pairing["roundNumber"],
             source_id=source_id,
+            player1=participant1,
+            player2=participant2,
         ).exists():
             pairing = Pairing.objects.create(
                 event=Event.objects.get(source_id=tournament_id),
@@ -208,19 +217,25 @@ def store_pairings(pairings, tournament_id):
                 player2_list=player2_list,
                 player1_result=player1_result,
                 player2_result=player2_result,
+                player1_score=pairing["playerScore1"],
+                player2_score=pairing["playerScore2"],
             )
 
 
 def store_data(filename):
     tournaments, players, pairings = parse_snl_results_file(filename)
 
-    # store_tournaments(tournaments)
-    # for tournament_id, player_data in players.items():
-    #     store_players(player_data, tournament_id)
-    #
+    store_tournaments(tournaments)
+    for tournament_id, player_data in players.items():
+        store_players(player_data, tournament_id)
+
     for tournament_id, pairing_data in pairings.items():
         try:
+            print(f"Storing pairings for {tournament_id} pairings: {len(pairing_data)}")
             store_pairings(pairing_data, tournament_id)
+            print(
+                f"Stored pairings for {tournament_id}, total pairings: {Pairing.objects.filter(event__source_id=tournament_id).count()}"
+            )
         except Exception as e:
             print(f"Failed to store pairings for {tournament_id} error: {e}")
             continue
