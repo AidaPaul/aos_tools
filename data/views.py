@@ -80,9 +80,10 @@ def export_pairings_as_csv(request, game_type: int = AOS):
                 if pairing.player2
                 else ""
             )
-        event_country = (
-            pairing.event.source_json["country"] if pairing.event.source_json else ""
-        )
+        if pairing.event.source_json and "country" in pairing.event.source_json:
+            event_country = pairing.event.source_json["country"]
+        else:
+            event_country = ""
         if "isOnlineEvent" in pairing.event.source_json:
             event_online = pairing.event.source_json["isOnlineEvent"]
         else:

@@ -51,7 +51,7 @@ def ask_chat_gpt(prompt):
 def regexp_army_details_aos(text):
     faction_match = re.search(r"(Faction|Allegiance): (.+)", text)
     subfaction_match = re.search(
-        r"(Subfaction|Glade|Stormhost|Mawtribe|Lodge|Legion|Constellation|Slaughterhost|Slaughterhosts|Tribe|Temple|Warclan|Host of Chaos|Enclave|Army Type|Lineage|Procession|City|Grand Court|Great Nation|Greatfray|Sky Port|Change Coven): ([\w+ \-\_]*)",
+        r"(Subfaction|Glade|Stormhost|Mawtribe|Lodge|Legion|Constellation|Slaughterhost|Slaughterhosts|Tribe|Temple|Warclan|Host of Chaos|Enclave|Army Type|Lineage|Procession|City|Grand Court|Great Nation|Greatfray|Sky Port|Change Coven|Glade|Host|Option): ([\w+ \-\_]*)",
         text,
     )
     grand_strategy_match = re.search(r"Grand Strategy: ([\w+ \-\_]*)", text)
@@ -60,6 +60,17 @@ def regexp_army_details_aos(text):
         faction = faction_match.group(2).strip()
     else:
         raise ValueError("Faction not detected in the input text.")
+
+    if faction == "Nurgle":
+        faction = "Maggotkin of Nurgle"
+    elif faction == "Khorne":
+        faction = "Blades of Khorne"
+    elif faction == "Slaanesh":
+        faction = "Hedonites of Slaanesh"
+    elif faction == "Tzeentch":
+        faction = "Disciples of Tzeentch"
+    elif "Soulblight Gravelords" in faction:
+        faction = "Soulblight Gravelords"
 
     if faction not in aos_factions:
         raise ValueError(f"Faction {faction} not recognized.")
