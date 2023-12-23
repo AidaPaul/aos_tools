@@ -41,6 +41,8 @@ aos_factions = [
     "Orruk Warclans",
     "Gloomspite Gitz",
     "Sons of Behemat",
+    "Ogor Mawtribes",
+    "Legion of the First Prince",
 ]
 
 w40k_factions = [

@@ -51,7 +51,7 @@ def ask_chat_gpt(prompt):
 def regexp_army_details_aos(text):
     faction_match = re.search(r"(Faction|Allegiance): (.+)", text)
     subfaction_match = re.search(
-        r"(Subfaction|Glade|Stormhost|Mawtribe|Lodge|Legion|Constellation): ([\w+ \-\_]*)",
+        r"(Subfaction|Glade|Stormhost|Mawtribe|Lodge|Legion|Constellation|Slaughterhost|Slaughterhosts|Tribe|Temple|Warclan|Host of Chaos|Enclave|Army Type|Lineage|Procession|City|Grand Court|Great Nation|Greatfray|Sky Port|Change Coven): ([\w+ \-\_]*)",
         text,
     )
     grand_strategy_match = re.search(r"Grand Strategy: ([\w+ \-\_]*)", text)
@@ -112,6 +112,7 @@ def extract_faction_details_for_aos(army_list_id: int):
         "Orruk Warclans",
         "Gloomspite Gitz",
         "Sons of Behemat",
+        "Ogor Mawtribes",
     ]
 
     you must be sure that the list is in one of those factions.
@@ -173,6 +174,9 @@ def extract_faction_details_for_aos(army_list_id: int):
         army_list.save()
     except DataError as e:
         print(f"Failed to save faction for {army_list.source_id} error: {e}")
+        army_list.gpt_parsed = True
+        army_list.gpt_parse_error = e
+        army_list.save()
     print(
         f"Detected faction: {army_list.faction} and subfaction: {army_list.subfaction} for {army_list.source_id} using gpt"
     )
