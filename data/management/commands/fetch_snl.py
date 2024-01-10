@@ -1,25 +1,14 @@
-import json
-from copy import copy
-
-import requests
-from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction
+import openpyxl
+from django.core.management.base import BaseCommand
 
 from data.models import (
     Event,
-    BCP,
-    W40K,
-    BOLT_ACTION,
-    AOS,
     Pairing,
     List,
     Participant,
     Player,
     SNL,
 )
-
-import openpyxl
 
 
 # Function to parse the snl_results.xlsx file and build a Python dictionary

@@ -9,7 +9,6 @@ from django.db.models import Q, F
 
 from data.models import *
 
-
 failed_factions = {}
 
 
@@ -268,8 +267,9 @@ class Command(BaseCommand):
             .filter(Q(faction__isnull=True))
             .annotate(event_date=F("participant__event__start_date"))
             .annotate(game_type=F("participant__event__game_type"))
-            .filter(game_type__in=[W40K])
-            .filter(event_date__gte="2023-07-01")
+            # .filter(game_type__in=[AOS])
+            .filter(event_date__gte="2023-11-01")
+            .exclude(gpt_parsed=True)
             .filter(~Q(raw_list="") | ~Q(raw_list__isnull=True))
         )
         self.stdout.write(f"Detecting for {army_lists.count()} lists")

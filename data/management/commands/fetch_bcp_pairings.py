@@ -1,6 +1,4 @@
-from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db.models import Count
 
 from data.models import *
 from data.tasks import fetch_pairings_for_event
@@ -21,8 +19,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         events = (
             Event.objects.filter(source=BCP)
-            .filter(game_type__in=[W40K])
-            .filter(start_date__gte="2023-11-01")
+            # .filter(game_type__in=[W40K])
+            .filter(start_date__gte="2024-01-01")
         )
         self.stdout.write(f"Fetching data for {events.count()} events")
         tasks = []

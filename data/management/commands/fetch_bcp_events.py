@@ -19,7 +19,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         month = 1
-        year = 2023
+        year = 2024
         limit = 100
         headers = settings.BCP_HEADERS
         game_type = options["game_type"]
