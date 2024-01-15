@@ -6,5 +6,5 @@
     <option name="pathToExecutable" value="C:\Users\Tymoteusz Paul\AppData\Local\Programs\Python\Python39\Scripts\black.exe" />
     <option name="sdkName" value="Poetry (aos_tools) (2)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Poetry (aos_tools) (2)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Poetry (aos_tools)" project-jdk-type="Python SDK" />
 </project>

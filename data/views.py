@@ -16,9 +16,72 @@ def raw_list(request, list_id):
     return HttpResponse(list.raw_list.replace("\n", "<br>"))
 
 
+def event_lists(request, event_id):
+    lists = List.objects.filter(
+        Q(participant__event__id=event_id)
+    )
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="lists.csv"'
+
+    writer = csv.writer(
+        response,
+        quoting=csv.QUOTE_NONNUMERIC,
+    )
+    writer.writerow(
+        [
+            "player_name",
+            "event_name",
+            "event_date",
+            "event_end_date",
+            "event_country",
+            "event_online",
+            "season",
+            "player_faction",
+            "player_subfaction",
+            "grand_strategy",
+            "player_list_url",
+            "source",
+        ]
+    )
+
+    for list in lists:
+        if list.participant.event.source == BCP:
+            player_name = f"{list.participant.source_json['firstName']} {list.participant.source_json['lastName']}"
+        if list.participant.event.source_json and "country" in list.participant.event.source_json:
+            event_country = list.participant.event.source_json["country"]
+        else:
+            event_country = ""
+        if "isOnlineEvent" in list.participant.event.source_json:
+            event_online = list.participant.event.source_json["isOnlineEvent"]
+        else:
+            event_online = False
+        list_faction = list.faction if list.faction else ""
+        list_subfaction = list.subfaction if list.subfaction else ""
+
+        if len(list.raw_list) > 10000:
+            list.raw_list = "List too long"
+
+        writer.writerow(
+            [
+                player_name,
+                list.participant.event.name,
+                list.participant.event.start_date,
+                list.participant.event.end_date,
+                event_country,
+                event_online,
+                "2023",
+                list_faction,
+                list_subfaction,
+                list.grand_strategy,
+                list.raw_list,
+                "bcp" if list.participant.event.source == BCP else "snl",
+            ]
+        )
+
+    return response
 def export_pairings_as_csv(request, game_type: int = AOS):
     pairings = Pairing.objects.filter(
-        Q(event__start_date__range=["2023-09-01", "2024-01-03"])
+        Q(event__start_date__range=["2023-09-01", "2024-01-09"])
         & Q(event__rounds__in=[3, 5, 8])
         & Q(event__game_type=game_type)
     ).order_by("event__name", "-event__start_date", "round", "id")
