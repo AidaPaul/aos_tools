@@ -131,6 +131,7 @@ GHB_2023_STRATEGIES = [
 AOS = 0
 W40K = 1
 BOLT_ACTION = 2
+OLD_WORLD = 3
 
 GAME_TYPES = [
     (AOS, "Age of Sigmar"),
