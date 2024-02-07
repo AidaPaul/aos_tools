@@ -14,7 +14,7 @@ class Command(BaseCommand):
         headers = settings.BCP_HEADERS
         # for event in Event.objects.filter(source=BCP).filter(start_date__gte="2024-01-16"):
         for event in Event.objects.filter(id=14479):
-            url = f"https://prod-api.bestcoastpairings.com/players?limit=100&eventId={event.source_id}&expand%5B%5D=army&expand%5B%5D=subFaction&expand%5B%5D=character&expand%5B%5D=team&expand%5B%5D=user"
+            url = f"https://newprod-api.bestcoastpairings.com/v1/players?limit=100&eventId={event.source_id}&expand%5B%5D=army&expand%5B%5D=subFaction&expand%5B%5D=character&expand%5B%5D=team&expand%5B%5D=user"
             base_url = copy(url)
             response = requests.get(url, headers=headers)
             last_key = None

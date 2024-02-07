@@ -23,7 +23,7 @@ class Command(BaseCommand):
         limit = 100
         headers = settings.BCP_HEADERS
         game_type = options["game_type"]
-        url = f"https://prod-api.bestcoastpairings.com/events?limit={limit}&startDate={year}-{month:02d}-01T00%3A00%3A00Z&endDate={year+1}-{month:02d}-01T00%3A00%3A00Z&sortKey=eventDate&sortAscending=true&gameType={game_type}"
+        url = f"https://newprod-api.bestcoastpairings.com/v1/events?limit={limit}&startDate={year}-{month:02d}-01T00%3A00%3A00Z&endDate={year+1}-{month:02d}-01T00%3A00%3A00Z&sortKey=eventDate&sortAscending=true&gameType={game_type}"
         base_url = copy(url)
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
