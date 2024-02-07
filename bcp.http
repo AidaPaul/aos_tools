@@ -4,44 +4,43 @@ Client-id: {{bcp-Client-id}}
 Authorization: {{bcp-Authorization}}
 Identity: {{bcp-Identity}}
 
-
 ### Get all events
-GET https://prod-api.bestcoastpairings.com/events?limit=100&startDate=2023-01-01T00%3A00%3A00Z&endDate=2024-01-31T00%3A00%3A00Z&sortKey=eventDate&sortAscending=true&gameType=4
+GET https://prod-api.bestcoastpairings.com/players?limit=100&eventId=C5JU2c8QSj&expand%5B%5D=army&expand%5B%5D=subFaction&expand%5B%5D=character&expand%5B%5D=team&expand%5B%5D=user
 Client-id: {{bcp-Client-id}}
 Authorization: {{bcp-Authorization}}
 Identity: {{bcp-Identity}}
 
 
 ### Get specific event details
-GET https://prod-api.bestcoastpairings.com/events/6UKY5AU7JX?expand%5B%5D=location&expand%5B%5D=gameStore&expand%5B%5D=owner&expand%5B%5D=gameSystem&expand%5B%5D=scorecard&expand%5B%5D=teamScorecard&expand%5B%5D=role&expand%5B%5D=following&expand%5B%5D=player
+GET https://newprod-api.bestcoastpairings.com/v1/events/6UKY5AU7JX?expand%5B%5D=location&expand%5B%5D=gameStore&expand%5B%5D=owner&expand%5B%5D=gameSystem&expand%5B%5D=scorecard&expand%5B%5D=teamScorecard&expand%5B%5D=role&expand%5B%5D=following&expand%5B%5D=player
 Client-id: {{bcp-Client-id}}
 Authorization: {{bcp-Authorization}}
 Identity: {{bcp-Identity}}
 
 
 ### Event roster
-GET https://prod-api.bestcoastpairings.com/players?limit=100&eventId=kGJY0dlWiN&expand%5B%5D=army&expand%5B%5D=subFaction&expand%5B%5D=character&expand%5B%5D=team&expand%5B%5D=user
+GET https://newprod-api.bestcoastpairings.com/players?limit=100&eventId=kGJY0dlWiN&expand%5B%5D=army&expand%5B%5D=subFaction&expand%5B%5D=character&expand%5B%5D=team&expand%5B%5D=user
 Client-id: {{bcp-Client-id}}
 Authorization: {{bcp-Authorization}}
 Identity: {{bcp-Identity}}
 
 
 ### Army list
-GET https://prod-api.bestcoastpairings.com/armylists/LDFDMT6KN7
+GET https://newprod-api.bestcoastpairings.com/armylists/LDFDMT6KN7
 Client-id: {{bcp-Client-id}}
 Authorization: {{bcp-Authorization}}
 Identity: {{bcp-Identity}}
 
 
 ### Placings
-GET https://prod-api.bestcoastpairings.com/players?limit=100&eventId=ZmC3CxkIuD&placings=true&expand%5B%5D=team&expand%5B%5D=army&expand%5B%5D=subFaction&expand%5B%5D=character
+GET https://newprod-api.bestcoastpairings.com/players?limit=100&eventId=ZmC3CxkIuD&placings=true&expand%5B%5D=team&expand%5B%5D=army&expand%5B%5D=subFaction&expand%5B%5D=character
 Client-id: {{bcp-Client-id}}
 Authorization: {{bcp-Authorization}}
 Identity: {{bcp-Identity}}
 
 
 ### Pairings
-GET https://prod-api.bestcoastpairings.com/pairings?limit=100&eventId=vM4hfrjTlB&round=5&pairingType=Pairing&expand%5B%5D=player1&expand%5B%5D=player2&expand%5B%5D=player1Game&expand%5B%5D=player2Game
+GET https://newprod-api.bestcoastpairings.com/pairings?limit=100&eventId=vM4hfrjTlB&round=5&pairingType=Pairing&expand%5B%5D=player1&expand%5B%5D=player2&expand%5B%5D=player1Game&expand%5B%5D=player2Game
 Client-id: {{bcp-Client-id}}
 Authorization: {{bcp-Authorization}}
 Identity: {{bcp-Identity}}
