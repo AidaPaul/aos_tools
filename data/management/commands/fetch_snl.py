@@ -117,6 +117,7 @@ def store_tournaments(tournaments):
         if Event.objects.filter(source=source, source_id=source_id).exists():
             continue
         event, _ = Event.objects.update_or_create(
+            name=tournament["name"],
             source=source,
             source_id=source_id,
             source_json=source_json,
