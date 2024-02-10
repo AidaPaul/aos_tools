@@ -328,3 +328,5 @@ cython_debug/
 #.idea/
 
 http-client.private.env.json
+
+snl_results.xlsx
