@@ -1,4 +1,5 @@
 import csv
+import datetime
 
 from django.db.models import Q
 from django.http import HttpResponse
@@ -80,14 +81,18 @@ def event_lists(request, event_id):
 
     return response
 def export_pairings_as_csv(request, game_type: int = AOS):
+    daterange_start = datetime.date.today() - datetime.timedelta(days=30*6)
+    daterange_end = datetime.date.today()
     pairings = Pairing.objects.filter(
-        Q(event__start_date__range=["2023-09-01", "2024-01-09"])
+        Q(event__start_date__range=[daterange_start, daterange_end])
         & Q(event__rounds__in=[3, 5, 8])
         & Q(event__game_type=game_type)
     ).order_by("event__name", "-event__start_date", "round", "id")
 
     response = HttpResponse(content_type="text/csv")
-    response["Content-Disposition"] = 'attachment; filename="pairings.csv"'
+    output_game = "aos" if game_type == AOS else "40k"
+    output_name = f"pairings_{output_game}_{daterange_start}_{daterange_end}.csv"
+    response["Content-Disposition"] = f'attachment; filename="{output_name}"'
 
     writer = csv.writer(
         response,
