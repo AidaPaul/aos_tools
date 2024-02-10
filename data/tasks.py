@@ -100,9 +100,13 @@ def fetch_pairings_for_event(event_id: int):
                 if "gamePoints" in pairing["player2Game"]:
                     pairing_dict["player2_score"] = pairing["player2Game"]["gamePoints"]
                 if "gameResult" in pairing["player1Game"]:
-                    pairing_dict["player1_result"] = pairing["player1Game"]["gameResult"]
+                    pairing_dict["player1_result"] = pairing["player1Game"][
+                        "gameResult"
+                    ]
                 if "gameResult" in pairing["player2Game"]:
-                    pairing_dict["player2_result"] = pairing["player2Game"]["gameResult"]
+                    pairing_dict["player2_result"] = pairing["player2Game"][
+                        "gameResult"
+                    ]
                 if "armyListObjectId" in pairing["player1"]:
                     pairing_dict["player1_list"] = List.objects.update_or_create(
                         source_id=pairing["player1"]["armyListObjectId"],

@@ -40,7 +40,9 @@ class Command(BaseCommand):
                     )
                     participant_dict = {
                         "event": event,
-                        "player": Player.objects.get(source=BCP, source_id=player["id"]),
+                        "player": Player.objects.get(
+                            source=BCP, source_id=player["id"]
+                        ),
                         "source_json": player,
                         "army_source_id": army_source_id,
                         "army_id": army_id,
@@ -50,12 +52,15 @@ class Command(BaseCommand):
                         player=Player.objects.get(source=BCP, source_id=player["id"]),
                         defaults=participant_dict,
                     )
-                    if 'army_source_id' in participant_dict and participant_dict['army_source_id'] is not None:
+                    if (
+                        "army_source_id" in participant_dict
+                        and participant_dict["army_source_id"] is not None
+                    ):
                         List.objects.update_or_create(
                             participant=player_part[0],
                             source_json={},
                             raw_list="",
-                            source_id=participant_dict['army_source_id'],
+                            source_id=participant_dict["army_source_id"],
                         )
                         self.stdout.write(
                             self.style.SUCCESS(
@@ -63,16 +68,18 @@ class Command(BaseCommand):
                             )
                         )
                     self.stdout.write(
-                        self.style.SUCCESS(
-                            f"Successfully fetched data for {player}"
-                        )
+                        self.style.SUCCESS(f"Successfully fetched data for {player}")
                     )
                 next_key = data["nextKey"]
                 if next_key == last_key:
                     self.stdout.write(self.style.SUCCESS(f"Finished fetching data"))
                     break
                 last_key = next_key
-                self.stdout.write(self.style.SUCCESS(f"Fetching data for {event.name} with key {next_key}"))
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"Fetching data for {event.name} with key {next_key}"
+                    )
+                )
                 url = f"{base_url}&nextKey={next_key}"
                 response = requests.get(url, headers=headers)
                 data = response.json()

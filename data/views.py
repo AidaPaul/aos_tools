@@ -18,9 +18,7 @@ def raw_list(request, list_id):
 
 
 def event_lists(request, event_id):
-    lists = List.objects.filter(
-        Q(participant__event__id=event_id)
-    )
+    lists = List.objects.filter(Q(participant__event__id=event_id))
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = 'attachment; filename="lists.csv"'
 
@@ -48,7 +46,10 @@ def event_lists(request, event_id):
     for list in lists:
         if list.participant.event.source == BCP:
             player_name = f"{list.participant.source_json['firstName']} {list.participant.source_json['lastName']}"
-        if list.participant.event.source_json and "country" in list.participant.event.source_json:
+        if (
+            list.participant.event.source_json
+            and "country" in list.participant.event.source_json
+        ):
             event_country = list.participant.event.source_json["country"]
         else:
             event_country = ""
@@ -80,8 +81,10 @@ def event_lists(request, event_id):
         )
 
     return response
+
+
 def export_pairings_as_csv(request, game_type: int = AOS):
-    daterange_start = datetime.date.today() - datetime.timedelta(days=30*6)
+    daterange_start = datetime.date.today() - datetime.timedelta(days=30 * 6)
     daterange_end = datetime.date.today()
     pairings = Pairing.objects.filter(
         Q(event__start_date__range=[daterange_start, daterange_end])

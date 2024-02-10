@@ -14,9 +14,8 @@ def update_name_for_existing_events(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('data', '0023_alter_list_faction'),
+        ("data", "0023_alter_list_faction"),
     ]
 
     operations = [
