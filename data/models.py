@@ -5,6 +5,7 @@ from django.db import models
 BCP = 0
 TSN = 1
 SNL = 2
+ECKSEN = 3
 
 event_sources = (
     (BCP, "BCP"),
@@ -98,6 +99,7 @@ w40k_chaos_space_marines = [
 ]
 w40k_dark_angel = ["Deathwing", "Ravenwing"]
 
+GHB_2021 = 2021
 GHB_2022S1 = 20221
 GHB_2022S2 = 20222
 GHB_2023 = 2023
@@ -242,3 +244,4 @@ class Pairing(models.Model):
     )
     source_id = models.CharField(max_length=255)
     source_json = models.JSONField()
+    scenario = models.CharField(max_length=255, null=True)
