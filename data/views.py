@@ -9,6 +9,8 @@ from data.models import (
     Pairing,
     AOS,
     BCP,
+    ECKSEN,
+    SNL,
 )
 
 
@@ -139,6 +141,13 @@ def export_pairings_as_csv(request, game_type: int = AOS):
                 if pairing.player2
                 else ""
             )
+        elif pairing.event.source == ECKSEN:
+            player1_name = (
+                pairing.player1.player.source_json["name"] if pairing.player1 else ""
+            )
+            player2_name = (
+                pairing.player2.player.source_json["name"] if pairing.player2 else ""
+            )
         else:
             player1_name = (
                 pairing.player1.player.source_json["playerName"]
@@ -176,6 +185,15 @@ def export_pairings_as_csv(request, game_type: int = AOS):
         if pairing.player2_list and len(pairing.player2_list.raw_list) > 10000:
             pairing.player2_list.raw_list = "List too long"
 
+        if pairing.event.source == BCP:
+            source = "bcp"
+        elif pairing.event.source == ECKSEN:
+            source = "ecksen"
+        elif pairing.event.source == SNL:
+            source = "snl"
+        else:
+            source = "unknown"
+
         writer.writerow(
             [
                 pairing.id,
@@ -198,7 +216,7 @@ def export_pairings_as_csv(request, game_type: int = AOS):
                 player2_list_subfaction,
                 pairing.player1_list.raw_list if pairing.player1_list else "",
                 pairing.player2_list.raw_list if pairing.player2_list else "",
-                "bcp" if pairing.event.source == BCP else "snl",
+                source,
             ]
         )
 

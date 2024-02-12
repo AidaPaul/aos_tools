@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('data', '0024_auto_20240207_2254'),
+        ("data", "0024_auto_20240207_2254"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='pairing',
-            name='scenario',
+            model_name="pairing",
+            name="scenario",
             field=models.CharField(max_length=255, null=True),
         ),
     ]

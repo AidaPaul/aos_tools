@@ -10,7 +10,14 @@ from data.models import (
     List,
     Participant,
     Player,
-    ECKSEN, GHB_2022S1, GHB_2021, GHB_2022S2, GHB_2023, WIN, LOSS, DRAW,
+    ECKSEN,
+    GHB_2022S1,
+    GHB_2021,
+    GHB_2022S2,
+    GHB_2023,
+    WIN,
+    LOSS,
+    DRAW,
 )
 
 fetch_all_query = """
@@ -52,6 +59,7 @@ query TournamentResultsBySystem($gamingSystemId: Int) {
 }
 """
 
+
 class Command(BaseCommand):
     help = "Fetch events from Ecksen"
 
@@ -62,11 +70,15 @@ class Command(BaseCommand):
         query = gql(fetch_all_query)
         response = client.execute(query, variable_values={"gamingSystemId": 1})
         for event in response["tournamentResultsBySystem"]:
-            event_dict = {"source": ECKSEN, "source_id": event["id"],
-                          "source_json": event, "name": event["name"],
-                          "rounds": len(event["rounds"]),
-                          "players_count": len(event["players"]),
-                          "start_date": f"{event['date']}T00:00:00+02:00"}
+            event_dict = {
+                "source": ECKSEN,
+                "source_id": event["id"],
+                "source_json": event,
+                "name": event["name"],
+                "rounds": len(event["rounds"]),
+                "players_count": len(event["players"]),
+                "start_date": f"{event['date']}T00:00:00+02:00",
+            }
             if event["gamingSystem"]["edition"] == "GH21":
                 event_dict["season"] = GHB_2021
             elif event["gamingSystem"]["edition"] == "GH22":
@@ -76,7 +88,9 @@ class Command(BaseCommand):
             elif event["gamingSystem"]["edition"] == "GH23-24":
                 event_dict["season"] = GHB_2023
             else:
-                raise Exception(f"Unknown season: {event['gamingSystem']['edition']} for event {event}")
+                raise Exception(
+                    f"Unknown season: {event['gamingSystem']['edition']} for event {event}"
+                )
 
             event_instance, created = Event.objects.update_or_create(
                 source=ECKSEN, source_id=event["id"], defaults=event_dict
@@ -111,7 +125,10 @@ class Command(BaseCommand):
 
             event_rounds = {}
             for round_instance in event["rounds"]:
-                event_rounds[round_instance["id"]] = [round_instance["number"], round_instance["scenario"]]
+                event_rounds[round_instance["id"]] = [
+                    round_instance["number"],
+                    round_instance["scenario"],
+                ]
 
             # And now we create pairings
             for player in event["players"]:
@@ -135,30 +152,62 @@ class Command(BaseCommand):
                         pairing_dict["player1_result"] = DRAW
                         pairing_dict["player2_result"] = DRAW
                     try:
-                        player1 = Participant.objects.get(event=event_instance, player=Player.objects.get(source=ECKSEN, source_id=player["id"]))
+                        player1 = Participant.objects.get(
+                            event=event_instance,
+                            player=Player.objects.get(
+                                source=ECKSEN, source_id=player["id"]
+                            ),
+                        )
                     except Player.DoesNotExist:
-                        self.stdout.write(self.style.ERROR(f"Player {player['id']} not found for event {event_instance}"))
+                        self.stdout.write(
+                            self.style.ERROR(
+                                f"Player {player['id']} not found for event {event_instance}"
+                            )
+                        )
                         continue
 
                     try:
-                        player2 = Participant.objects.get(event=event_instance, player=Player.objects.get(source=ECKSEN, source_id=result["againstPlayerId"]))
+                        player2 = Participant.objects.get(
+                            event=event_instance,
+                            player=Player.objects.get(
+                                source=ECKSEN, source_id=result["againstPlayerId"]
+                            ),
+                        )
                     except Player.DoesNotExist:
-                        self.stdout.write(self.style.ERROR(f"Player {result['againstPlayerId']} not found for event {event_instance}"))
+                        self.stdout.write(
+                            self.style.ERROR(
+                                f"Player {result['againstPlayerId']} not found for event {event_instance}"
+                            )
+                        )
                         continue
 
                     # Check if that pairing already exists from the other side
-                    if Pairing.objects.filter(source_id=f"{event_instance.id}_{round_number}_{result['againstPlayerId']}_{player['id']}").exists():
+                    if Pairing.objects.filter(
+                        source_id=f"{event_instance.id}_{round_number}_{result['againstPlayerId']}_{player['id']}"
+                    ).exists():
                         continue
-                    source_id=f"{event_instance.id}_{round_number}_{player['id']}_{result['againstPlayerId']}"
+                    source_id = f"{event_instance.id}_{round_number}_{player['id']}_{result['againstPlayerId']}"
                     try:
-                        player1_list = List.objects.get(source_id=f"{player1.id}_{event_instance.id}")
+                        player1_list = List.objects.get(
+                            source_id=f"{player1.id}_{event_instance.id}"
+                        )
                     except List.DoesNotExist:
-                        self.stdout.write(self.style.ERROR(f"List for player {player1} not found for event {event_instance}"))
+                        self.stdout.write(
+                            self.style.ERROR(
+                                f"List for player {player1} not found for event {event_instance}"
+                            )
+                        )
                         continue
                     try:
-                        player2_list = List.objects.get(source_id=f"{player2.id}_{event_instance.id}")
+                        player2_list = List.objects.get(
+                            source_id=f"{player2.id}_{event_instance.id}"
+                        )
                     except List.DoesNotExist:
-                        self.stdout.write(self.style.ERROR(f"List for player {player2} not found for event {event_instance}"))
+                        self.stdout.write(
+                            self.style.ERROR(
+                                f"List for player {player2} not found for event {event_instance}"
+                            )
+                        )
                         continue
 
                     pairing_dict["player1"] = player1
@@ -166,7 +215,9 @@ class Command(BaseCommand):
                     pairing_dict["player1_list"] = player1_list
                     pairing_dict["player2_list"] = player2_list
                     if Pairing.objects.filter(source_id=source_id).exists():
-                        Pairing.objects.filter(source_id=source_id).update(**pairing_dict)
+                        Pairing.objects.filter(source_id=source_id).update(
+                            **pairing_dict
+                        )
                     else:
                         pairing_dict["source_id"] = source_id
                         Pairing.objects.create(**pairing_dict)
@@ -175,6 +226,14 @@ class Command(BaseCommand):
             participants = Participant.objects.filter(event=event_instance)
             expected_pairings = int(len(participants) * event_instance.rounds / 2)
             if len(pairings) != expected_pairings:
-                self.stdout.write(self.style.ERROR(f"For event {event_instance} expected {expected_pairings} pairings, found {len(pairings)} instead"))
+                self.stdout.write(
+                    self.style.ERROR(
+                        f"For event {event_instance} expected {expected_pairings} pairings, found {len(pairings)} instead"
+                    )
+                )
             else:
-                self.stdout.write(self.style.SUCCESS(f"Event {event_instance} has {len(pairings)} pairings as expected"))
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"Event {event_instance} has {len(pairings)} pairings as expected"
+                    )
+                )
