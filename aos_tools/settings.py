@@ -144,3 +144,5 @@ BCP_HEADERS = {
     "Authorization": os.environ.get("BCP_AUTHORIZATION", ""),
     "Identity": os.environ.get("BCP_IDENTITY", ""),
 }
+
+ECKSEN_ENDPOINT = os.environ.get("ECKSEN_ENDPOINT", "https://ecksen.com/graphql/")
