@@ -10,7 +10,7 @@ from data.models import (
     AOS,
     BCP,
     ECKSEN,
-    SNL,
+    SNL, W40K, OLD_WORLD,
 )
 
 
@@ -95,7 +95,12 @@ def export_pairings_as_csv(request, game_type: int = AOS):
     ).order_by("event__name", "-event__start_date", "round", "id")
 
     response = HttpResponse(content_type="text/csv")
-    output_game = "aos" if game_type == AOS else "40k"
+    if game_type == AOS:
+        output_game = "aos"
+    elif game_type == W40K:
+        output_game = "40k"
+    elif game_type == OLD_WORLD:
+        output_game = "old_world"
     output_name = f"pairings_{output_game}_{daterange_start}_{daterange_end}.csv"
     response["Content-Disposition"] = f'attachment; filename="{output_name}"'
 
