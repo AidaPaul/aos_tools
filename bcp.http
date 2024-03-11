@@ -1,25 +1,34 @@
 #GET https://pnnct8s9sk.execute-api.us-east-1.amazonaws.com/prod/players?limit=100&eventId=o6QVSixlGK&expand%5B%5D=army&expand%5B%5D=subFaction&expand%5B%5D=character&expand%5B%5D=team&expand%5B%5D=user
-GET https://pnnct8s9sk.execute-api.us-east-1.amazonaws.com/prod/players?limit=100&eventId=o6QVSixlGK&expand[true]=army&expand[true]=subFaction&expand[true]=character&expand[]=team&expand[]=user
+GET https://pnnct8s9sk.execute-api.us-east-1.amazonaws.com/prod/players?
+    limit=100&eventId=o6QVSixlGK&expand[true]=army&expand[true]=subFaction&
+    expand[true]=character&expand[]=team&expand[]=user
 Client-id: {{bcp-Client-id}}
 Authorization: {{bcp-Authorization}}
 Identity: {{bcp-Identity}}
 
 ### Get all events
-GET https://prod-api.bestcoastpairings.com/players?limit=100&eventId=C5JU2c8QSj&expand%5B%5D=army&expand%5B%5D=subFaction&expand%5B%5D=character&expand%5B%5D=team&expand%5B%5D=user
+GET https://prod-api.bestcoastpairings.com/players?limit=100&eventId=C5JU2c8QSj&
+    expand%5B%5D=army&expand%5B%5D=subFaction&expand%5B%5D=character&
+    expand%5B%5D=team&expand%5B%5D=user
 Client-id: {{bcp-Client-id}}
 Authorization: {{bcp-Authorization}}
 Identity: {{bcp-Identity}}
 
 
 ### Get specific event details
-GET https://newprod-api.bestcoastpairings.com/v1/events/6UKY5AU7JX?expand%5B%5D=location&expand%5B%5D=gameStore&expand%5B%5D=owner&expand%5B%5D=gameSystem&expand%5B%5D=scorecard&expand%5B%5D=teamScorecard&expand%5B%5D=role&expand%5B%5D=following&expand%5B%5D=player
+GET https://newprod-api.bestcoastpairings.com/v1/events/6UKY5AU7JX?
+    expand%5B%5D=location&expand%5B%5D=gameStore&expand%5B%5D=owner&
+    expand%5B%5D=gameSystem&expand%5B%5D=scorecard&expand%5B%5D=teamScorecard&
+    expand%5B%5D=role&expand%5B%5D=following&expand%5B%5D=player
 Client-id: {{bcp-Client-id}}
 Authorization: {{bcp-Authorization}}
 Identity: {{bcp-Identity}}
 
 
 ### Event roster
-GET https://newprod-api.bestcoastpairings.com/players?limit=100&eventId=kGJY0dlWiN&expand%5B%5D=army&expand%5B%5D=subFaction&expand%5B%5D=character&expand%5B%5D=team&expand%5B%5D=user
+GET https://newprod-api.bestcoastpairings.com/players?limit=100&
+    eventId=kGJY0dlWiN&expand%5B%5D=army&expand%5B%5D=subFaction&
+    expand%5B%5D=character&expand%5B%5D=team&expand%5B%5D=user
 Client-id: {{bcp-Client-id}}
 Authorization: {{bcp-Authorization}}
 Identity: {{bcp-Identity}}
@@ -33,14 +42,26 @@ Identity: {{bcp-Identity}}
 
 
 ### Placings
-GET https://newprod-api.bestcoastpairings.com/players?limit=100&eventId=ZmC3CxkIuD&placings=true&expand%5B%5D=team&expand%5B%5D=army&expand%5B%5D=subFaction&expand%5B%5D=character
+GET https://newprod-api.bestcoastpairings.com/players?limit=100&
+    eventId=ZmC3CxkIuD&placings=true&expand%5B%5D=team&expand%5B%5D=army&
+    expand%5B%5D=subFaction&expand%5B%5D=character
 Client-id: {{bcp-Client-id}}
 Authorization: {{bcp-Authorization}}
 Identity: {{bcp-Identity}}
 
 
 ### Pairings
-GET https://newprod-api.bestcoastpairings.com/pairings?limit=100&eventId=vM4hfrjTlB&round=5&pairingType=Pairing&expand%5B%5D=player1&expand%5B%5D=player2&expand%5B%5D=player1Game&expand%5B%5D=player2Game
+GET https://newprod-api.bestcoastpairings.com/pairings?limit=100&
+    eventId=vM4hfrjTlB&round=5&pairingType=Pairing&expand%5B%5D=player1&
+    expand%5B%5D=player2&expand%5B%5D=player1Game&expand%5B%5D=player2Game
 Client-id: {{bcp-Client-id}}
 Authorization: {{bcp-Authorization}}
 Identity: {{bcp-Identity}}
+
+
+### Refresh token
+POST https://newprod-api.bestcoastpairings.com/v1/users/refreshtokens
+Client-id: {{bcp-Client-id}}
+Content-Type: application/json
+
+{"refreshToken":"eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.KFuKBRqkPLCSrWqiTerX0HoGczjDAEWiSiNbFhGGDadHgP2LRcD9XuMH61snX3GLvxBJ9Z6dpep2U08i0JMTjasKuCG7WZrXSU9ULO4aHmPz1w502hVBZcDdCYhQou5tREHR0r86JIVb6RQ1cWiCrO5eBl_8LK0KyxU0tvsN-ObV0I0xJuc1O7ds3qdqJPCh9h8toEz2YFHG-PJQnQtjm7N0xiYUBBf78EQRHaFQ0Sr6YBZnY0eNilqt37AkeANhtx2ngDVpd77hjEIXe_JcEkUcE3FmvbtgiJp_BMihUvpqmRRXG-ojIj9Z1aZqS5Q1zN7cP2w85LCCKExke4CVXw.-mpfegwORxwkFPYy.cuTNpOoFN2IOrQ1ISykcHQCGBH04Hf7x-LTAvCOYPXrFqIpSzxPWPZ5CtUqKuH7HvBaoQcn2aNDh3DAvEfECfg33MM0eonm730xAzIuyX1mEqWmQ9p2yyEs313wAnRpBw7GX2r-xSsgd4JCR_XewXWcZu_Rkutl05L8WMUjk1HOJxjqQSlXBuAvbBELAhbinSwh5wrfhZFIeavXh4bHG9ITuCOglHLDePIl2CBMF0oMtcOFrdtykSfxYFHmZq0kGEd3BAp5gAsCqbj8tUD9KcC-Oz3nCfhfNkTBsfUXJy7uyCIfowH632uLB7S8Vgcq-ixIWET1or6BLRoBzTCxyJLuohBqRhsJV7-jQ1F3wjW4bHMKSeVyx839P9cdoxivQm-3bw5y-YuSe_VFh_E3WLS17YUwLsETdotpLx25_ZE7OM5AW6cWt2RPMzOvNBrud3bZOjjRLup2_9oe5Wg3MbCPtRkC8YmzpjXXvhxx7UDlaj9CnEcZYoIs31sh51eUamKgF4KwAJ1ZSiI4vrndCOXsye_jrkrwAFW4-Q1abnO1CLfakHOL1Z3zyiRdin96Zi_QC0aa-4-MCuyVThhXS5JahN5yTJC-tcloW8oBGh0HE2ZPSuE0EGuh8OD8eh_DUQB7u9FetgpqMuWDKDUaIoEGsXWR6xW6bFCFZF2wG0v4lzna2AX2MFQweH1xGQHMUkEmAfy1olO8bICpjgzOhXCFRBgUOlmmlXjZGZuiu4XaN7KDEboC6QZ3jN9JSV8L_07PZ2OcPXqd5-AT8O0NgYt9_u14SYXfeVfmefp9NbKQezbZtGIOPRED6Q73uo0CFIQNQC4zlIN2_VN-gfymr9HSLOul7EfRABNYKkjXCtltqIlZYXvzDFPxPbBnl1IjSVB7R5VKEpN2M42U5K0XWnDgcmE-AokMva2yYQlSHLDHNQ5h0U-GZPeLQMkIgxkDl34N9cFDdPcQNxrMiL5lVI3OvaHHTshzzu-YWTpfe5_4mxHEKS1goSH7VniKau2KqOI5dto6ediQC4XN4C2UPk7Nutdsm_TSnCWcUX-n_1W9FIljOhsSAIr5LLtqGzR2lV9lv3Kx4HvfUC6euZ_BYjuNteYkCqwakSfC3mpkouiqfgdvyvRLrLNR8ib-ZSpZpsTIxP3wJJ64cPH4AwRUyiQ860CqxSva2NfVYO-B-PzxlSrZk9V6evIS686jpCprY9WXteLED9WYXlp8wm1uRL7Kn8wibnayMKVMmhCRXr63n4-TT5HlRHpLUG8Kg52UmXx6FdVlnW0pA8G08Z3vfBYTg80hxtMGfPvw5QVcxZF7X-gj8xTbsRjnyrQ.9f9ju7iKbkwS_-K6l6AW3g"}
