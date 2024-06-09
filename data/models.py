@@ -134,10 +134,14 @@ AOS = 0
 W40K = 1
 BOLT_ACTION = 2
 OLD_WORLD = 3
+KINGS_OF_WAR = 4
 
 GAME_TYPES = [
     (AOS, "Age of Sigmar"),
     (W40K, "Warhammer 40k"),
+    (BOLT_ACTION, "Bolt Action"),
+    (OLD_WORLD, "Old World"),
+    (KINGS_OF_WAR, "Kings of War"),
 ]
 
 

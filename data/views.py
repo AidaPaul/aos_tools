@@ -10,7 +10,7 @@ from data.models import (
     AOS,
     BCP,
     ECKSEN,
-    SNL, W40K, OLD_WORLD,
+    SNL, W40K, OLD_WORLD, KINGS_OF_WAR
 )
 
 
@@ -101,6 +101,8 @@ def export_pairings_as_csv(request, game_type: int = AOS):
         output_game = "40k"
     elif game_type == OLD_WORLD:
         output_game = "old_world"
+    elif game_type == KINGS_OF_WAR:
+        output_game = "kow"
     output_name = f"pairings_{output_game}_{daterange_start}_{daterange_end}.csv"
     response["Content-Disposition"] = f'attachment; filename="{output_name}"'
 
@@ -172,18 +174,30 @@ def export_pairings_as_csv(request, game_type: int = AOS):
             event_online = pairing.event.source_json["isOnlineEvent"]
         else:
             event_online = False
-        player1_list_faction = (
-            pairing.player1_list.faction if pairing.player1_list else ""
-        )
-        player1_list_subfaction = (
-            pairing.player1_list.subfaction if pairing.player1_list else ""
-        )
-        player2_list_faction = (
-            pairing.player2_list.faction if pairing.player2_list else ""
-        )
-        player2_list_subfaction = (
-            pairing.player2_list.subfaction if pairing.player2_list else ""
-        )
+        if pairing.event.game_type == OLD_WORLD:
+            if pairing.player1_list is None or pairing.player2_list is None:
+                player1_list_faction = ""
+                player1_list_subfaction = ""
+                player2_list_faction = ""
+                player2_list_subfaction = ""
+            else:
+                player1_list_faction = pairing.player1_list.source_json.get("armyName", "")
+                player1_list_subfaction = ""
+                player2_list_faction = pairing.player2_list.source_json.get("armyName", "")
+                player2_list_subfaction = ""
+        else:
+            player1_list_faction = (
+                pairing.player1_list.faction if pairing.player1_list else ""
+            )
+            player1_list_subfaction = (
+                pairing.player1_list.subfaction if pairing.player1_list else ""
+            )
+            player2_list_faction = (
+                pairing.player2_list.faction if pairing.player2_list else ""
+            )
+            player2_list_subfaction = (
+                pairing.player2_list.subfaction if pairing.player2_list else ""
+            )
 
         if pairing.player1_list and len(pairing.player1_list.raw_list) > 10000:
             pairing.player1_list.raw_list = "List too long"

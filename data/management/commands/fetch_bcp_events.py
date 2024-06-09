@@ -4,7 +4,8 @@ import requests
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
-from data.models import Event, BCP, W40K, BOLT_ACTION, AOS, OLD_WORLD
+from data.models import Event, BCP, W40K, BOLT_ACTION, AOS, OLD_WORLD, \
+    KINGS_OF_WAR
 
 
 class Command(BaseCommand):
@@ -50,6 +51,8 @@ class Command(BaseCommand):
                     event_dict["game_type"] = BOLT_ACTION
                 elif options["game_type"] == 89:
                     event_dict["game_type"] = OLD_WORLD
+                elif options["game_type"] == 16:
+                    event_dict["game_type"] = KINGS_OF_WAR
                 self.stdout.write(
                     self.style.SUCCESS(
                         f"Successfully fetched data for {event['name']}, {event['eventDate']}"

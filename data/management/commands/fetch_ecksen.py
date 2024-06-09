@@ -63,9 +63,16 @@ query TournamentResultsBySystem($gamingSystemId: Int) {
 class Command(BaseCommand):
     help = "Fetch events from Ecksen"
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--from_date",
+            type=str,
+            help="Fetch events from this date",
+        )
+
     def handle(self, *args, **options):
         transport = AIOHTTPTransport(url=settings.ECKSEN_ENDPOINT)
-        client = Client(transport=transport, fetch_schema_from_transport=True)
+        client = Client(transport=transport, fetch_schema_from_transport=False)
 
         query = gql(fetch_all_query)
         response = client.execute(query, variable_values={"gamingSystemId": 1})
@@ -91,6 +98,9 @@ class Command(BaseCommand):
                 raise Exception(
                     f"Unknown season: {event['gamingSystem']['edition']} for event {event}"
                 )
+
+            if Event.objects.filter(source=ECKSEN, source_id=event["id"]).exists():
+                continue
 
             event_instance, created = Event.objects.update_or_create(
                 source=ECKSEN, source_id=event["id"], defaults=event_dict
