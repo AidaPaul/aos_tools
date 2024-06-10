@@ -13,7 +13,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.12]
+        python-version: [3.7, 3.8, 3.9]
 
     steps:
     - uses: actions/checkout@v4
@@ -24,14 +24,12 @@ jobs:
     - name: Install Poetry
       run: |
         curl -sSL https://install.python-poetry.org | python3 -
-        echo "export PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
+        echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
     - name: Install Dependencies
       run: |
+        source $GITHUB_ENV
         poetry install
-      env:
-        PATH: ${{ env.PATH }}
     - name: Run Tests
       run: |
+        source $GITHUB_ENV
         poetry run python manage.py test
-      env:
-        PATH: ${{ env.PATH }}
