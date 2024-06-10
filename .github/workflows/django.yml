@@ -24,12 +24,14 @@ jobs:
     - name: Install Poetry
       run: |
         curl -sSL https://install.python-poetry.org | python3 -
-        export PATH="$HOME/.local/bin:$PATH"
+        echo "export PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
     - name: Install Dependencies
       run: |
-        export PATH="$HOME/.local/bin:$PATH"
         poetry install
+      env:
+        PATH: ${{ env.PATH }}
     - name: Run Tests
       run: |
-        export PATH="$HOME/.local/bin:$PATH"
         poetry run python manage.py test
+      env:
+        PATH: ${{ env.PATH }}
