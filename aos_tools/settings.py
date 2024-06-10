@@ -9,8 +9,10 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+
 import os
 from pathlib import Path
+
 import redis
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-4qyvookw)ev%7yvz+og3cx)9u*a-3*mpge1%3o+2fz0%%cu3#u"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
+DEBUG = True
 
 ALLOWED_HOSTS = ["aida.ngrok.app", "127.0.0.1", "localhost"]
 CSRF_TRUSTED_ORIGINS = ["https://aida.ngrok.app"]
@@ -150,7 +152,10 @@ BCP_REFRESH_TOKEN = "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVA
 
 ECKSEN_ENDPOINT = os.environ.get("ECKSEN_ENDPOINT", "https://ecksen.com/graphql/")
 
-REDIS_HOST = 'localhost'
+REDIS_HOST = "localhost"
+REDIS_PORT = 6379
 REDIS_DB = 0
 
-REDIS_CLIENT = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, decode_responses=True)
+REDIS_CLIENT = redis.StrictRedis(
+    host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, decode_responses=True
+)

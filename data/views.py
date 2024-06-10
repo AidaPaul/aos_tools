@@ -10,7 +10,10 @@ from data.models import (
     AOS,
     BCP,
     ECKSEN,
-    SNL, W40K, OLD_WORLD, KINGS_OF_WAR
+    SNL,
+    W40K,
+    OLD_WORLD,
+    KINGS_OF_WAR,
 )
 
 
@@ -181,9 +184,13 @@ def export_pairings_as_csv(request, game_type: int = AOS):
                 player2_list_faction = ""
                 player2_list_subfaction = ""
             else:
-                player1_list_faction = pairing.player1_list.source_json.get("armyName", "")
+                player1_list_faction = pairing.player1_list.source_json.get(
+                    "armyName", ""
+                )
                 player1_list_subfaction = ""
-                player2_list_faction = pairing.player2_list.source_json.get("armyName", "")
+                player2_list_faction = pairing.player2_list.source_json.get(
+                    "armyName", ""
+                )
                 player2_list_subfaction = ""
         else:
             player1_list_faction = (

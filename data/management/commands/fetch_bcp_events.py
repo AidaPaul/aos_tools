@@ -4,8 +4,7 @@ import requests
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
-from data.models import Event, BCP, W40K, BOLT_ACTION, AOS, OLD_WORLD, \
-    KINGS_OF_WAR
+from data.models import Event, BCP, W40K, BOLT_ACTION, AOS, OLD_WORLD, KINGS_OF_WAR
 
 
 class Command(BaseCommand):

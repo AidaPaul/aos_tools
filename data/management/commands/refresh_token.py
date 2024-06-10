@@ -6,8 +6,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 import time
 
-from data.models import Event, BCP, W40K, BOLT_ACTION, AOS, OLD_WORLD, \
-    KINGS_OF_WAR
+from data.models import Event, BCP, W40K, BOLT_ACTION, AOS, OLD_WORLD, KINGS_OF_WAR
 
 
 class Command(BaseCommand):
@@ -19,9 +18,7 @@ class Command(BaseCommand):
         while True:
             headers = settings.BCP_HEADERS
             url = "https://newprod-api.bestcoastpairings.com/v1/users/refreshtokens"
-            body = {
-                "refreshToken": settings.BCP_REFRESH_TOKEN
-            }
+            body = {"refreshToken": settings.BCP_REFRESH_TOKEN}
             response = requests.post(url, json=body, headers=headers)
             if response.status_code != 200:
                 raise CommandError(
@@ -30,6 +27,10 @@ class Command(BaseCommand):
             data = response.json()
             bcp_headers = settings.BCP_HEADERS
             bcp_headers["Authorization"] = f"Bearer {data['accessToken']}"
-            redis_client.set('BCP_HEADERS', json.dumps(headers))
-            self.stdout.write(self.style.SUCCESS(f"Successfully refreshed token, new token: {data['accessToken']}"))
+            redis_client.set("BCP_HEADERS", json.dumps(headers))
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Successfully refreshed token, new token: {data['accessToken']}"
+                )
+            )
             time.sleep(300)
