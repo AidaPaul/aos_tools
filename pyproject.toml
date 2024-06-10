@@ -20,6 +20,7 @@ eventlet = "^0.34.2"
 openpyxl = "^3.1.2"
 black = "^23.12.1"
 gql = {extras = ["aiohttp"], version = "^3.5.0"}
+redis = "^5.0.5"
 
 
 [build-system]

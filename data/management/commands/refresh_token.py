@@ -1,3 +1,4 @@
+import json
 from copy import copy
 
 import requests
@@ -13,7 +14,8 @@ class Command(BaseCommand):
     help = "Refresh BCP token"
 
     def handle(self, *args, **options):
-        # do this every 5 minutes until command stops
+        redis_client = settings.REDIS_CLIENT
+
         while True:
             headers = settings.BCP_HEADERS
             url = "https://newprod-api.bestcoastpairings.com/v1/users/refreshtokens"
@@ -26,7 +28,8 @@ class Command(BaseCommand):
                     f"Failed to refresh token, code: {response.status_code} body response: {response.text}"
                 )
             data = response.json()
-            headers["Authorization"] = f"Bearer {data['accessToken']}"
-            settings.BCP_HEADERS = headers
-            self.stdout.write(self.style.SUCCESS("Successfully refreshed token"))
+            bcp_headers = settings.BCP_HEADERS
+            bcp_headers["Authorization"] = f"Bearer {data['accessToken']}"
+            redis_client.set('BCP_HEADERS', json.dumps(headers))
+            self.stdout.write(self.style.SUCCESS(f"Successfully refreshed token, new token: {data['accessToken']}"))
             time.sleep(300)

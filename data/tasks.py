@@ -1,18 +1,19 @@
+import json
 from copy import copy
 
 from celery import shared_task
 from django.conf import settings
 
-headers = settings.BCP_HEADERS
-
 from data.models import *
 import requests
 
+redis_client = settings.REDIS_CLIENT
 
 @shared_task
 def fetch_list(list_id: int):
     current_list = List.objects.get(id=list_id)
     url = f"https://newprod-api.bestcoastpairings.com/v1/armylists/{current_list.source_id}"
+    headers = json.loads(redis_client.get('BCP_HEADERS') or '{}')
     response = requests.get(url, headers=headers)
     if response.status_code != 200:
         raise Exception(
@@ -31,6 +32,7 @@ def fetch_pairings_for_event(event_id: int):
     event = Event.objects.get(id=event_id)
     current_round = 0
     max_rounds = event.rounds
+    headers = json.loads(redis_client.get('BCP_HEADERS') or '{}')
     if max_rounds is None:
         return
     while current_round <= max_rounds:
