@@ -23,7 +23,17 @@ jobs:
     - name: Run black
       run: black .
 
+    - name: Check for changes
+      id: check_changes
+      run: |
+        if [[ -n "$(git status --porcelain)" ]]; then
+          echo "##[set-output name=changes_detected;]true"
+        else
+          echo "##[set-output name=changes_detected;]false"
+        fi
+
     - name: Commit changes
+      if: steps.check_changes.outputs.changes_detected == 'true'
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
