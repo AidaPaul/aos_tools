@@ -59,6 +59,211 @@ aos_factions = [
     "Legion of the First Prince",
 ]
 
+aos_subfactions = [
+    "Fortress-City Defenders",
+    "Collegiate Arcane Expedition",
+    "Dawnbringer Crusade",
+    "Ironweld Guild Army",
+    "Scáthcoven",
+    "Shadow Patrol",
+    "Cauldron Guard",
+    "Slaughter Troupe",
+    "Scales of Vulcatrix",
+    "Forge Brethren",
+    "Warrior Kinband",
+    "Lords of the Lodge",
+    "Akhelian Beastmasters",
+    "Soul-raid Ambushers",
+    "Isharann Council",
+    "Namarti Corps",
+    "Endrineers Guild Expeditionary Force",
+    "Iron Sky Attack Squadron",
+    "Grundcorps Wing",
+    "Aether-runners",
+    "Vanari Battlehost",
+    "Alarith Temple",
+    "Scinari Council",
+    "Hurakan Temple",
+    "Thunderhead Host",
+    "Lightning Echelon",
+    "Vanguard Wing",
+    "Sentinels of the Bleak Citadels",
+    "Eternal Starhost",
+    "Shadowstrike Starhost",
+    "Sunclaw Starhost",
+    "Thunderquake Starhost",
+    "Lords of the Clan",
+    "Outcasts",
+    "Free Spirits",
+    "Forest Folk",
+    "Death Battle formations",
+    "Cannibal Court",
+    "Ghoul Patrol",
+    "Lords of the Manor",
+    "Royal Menagerie",
+    "Vanishing Phantasms",
+    "Hunters of the Accursed",
+    "Death Stalkers",
+    "Procession of Death",
+    "Mortisan Council",
+    "Mortek Phalanx",
+    "Kavalos Lance",
+    "Mortek Ballistari",
+    "Legion of Shyish",
+    "Deathstench Drove",
+    "Bacchanal of Blood",
+    "Deathmarch",
+    "Marauding Brayherd",
+    "Hungering Warherd",
+    "Almighty Beastherd",
+    "Thunderscorn Stormherd",
+    "Depraved Carnival",
+    "Epicurean Revellers",
+    "Seeker Cavalcade",
+    "Supreme Sybarites",
+    "Khornate Legion",
+    "Brass Stampede",
+    "Murder Host",
+    "Bloodbound Warhorde",
+    "Tallyband of Nurgle",
+    "Plague Cyst",
+    "Nurgle’s Menagerie",
+    "Affliction Cyst",
+    "Despoilers",
+    "Darkoath Horde",
+    "Godsworn Warband",
+    "Legion of Chaos",
+    "Claw-Horde",
+    "Fleshmeld Menargerie",
+    "Virulent Procession",
+    "Warpog Convocation",
+    "Arcanite Cabal",
+    "Tzaangor Coven",
+    "Change Host",
+    "Wyrdflame Host",
+    "Kunnin' Rukk",
+    "Snaga Rukk",
+    "Brutal Rukk",
+    "Kop Rukk",
+    "Squigalanch",
+    "Moonclan Skrap",
+    "Troggherd",
+    "Spiderfang Stalktribe",
+    "Prophets of the Gulping God",
+    "Heralds of the Everwinter",
+    "Beast Handlers",
+    "Blackpowder Fanatics",
+    "Ironfist",
+    "Weirdfist",
+    "Ironjawz Brawl",
+    "Grunta Stampede",
+    "Kruleboyz Klaw",
+    "Middul Finga",
+    "Light Finga",
+    "Trophy Finga",
+    "Taker Tribe",
+    "Breaker Tribe",
+    "Stomper Tribe",
+    "Boss Tribe",
+]
+
+w40k_factions = [
+    "Adepta Sororitas",
+    "Adeptus Custodes",
+    "Adeptus Mechanicus",
+    "Aeldari",
+    "Astra Militarum",
+    "Black Templars",
+    "Blood Angels",
+    "Chaos Daemons",
+    "Chaos Knights",
+    "Chaos Space Marines",
+    "Chaos Titan Legions",
+    "Dark Angels",
+    "Death Guard",
+    "Deathwatch",
+    "Drukhari",
+    "Genestealer Cults",
+    "Grey Knights",
+    "Imperial Agents",
+    "Imperial Knights",
+    "Leagues of Votann",
+    "Necrons",
+    "Orks",
+    "Space Marines",
+    "Space Wolves",
+    "Thousand Sons",
+    "Titan Legions",
+    "Tyranids",
+    "T'au Empire",
+    "World Eaters",
+]
+
+w40k_marines = [
+    "Adeptus Astares",
+    "Adeptus Astartes",
+    "Ultramarines",
+    "Iron Fist",
+    "Imperial Fist",
+    "Imperial Fists",
+    "Black Templars",
+    "Iron Hands",
+    "Blood Angels",
+    "Dark Angels",
+]
+
+w40k_chaos_space_marines = [
+    "Black Legion",
+    "Death Guard",
+    "Thousand Sons",
+    "World Eaters",
+]
+
+w40k_dark_angel = ["Deathwing", "Ravenwing"]
+
+GHB_2021 = 2021
+GHB_2022S1 = 20221
+GHB_2022S2 = 20222
+GHB_2023 = 2023
+GHB_2024 = 2024
+
+GHB_2022S1_STRATEGIES = [
+    "Tame the Land",
+    "No Place for the Weak",
+    "Demonstration of Strength",
+    "Show of Dominance",
+    "Take What",
+]
+
+GHB_2022S2_STRATEGIES = [
+    "Tame the Land",
+    "Stake a Claim",
+    "Survivor's Instinct",
+    "The Day is Ours!",
+]
+
+GHB_2023_STRATEGIES = [
+    "Control the Nexus",
+    "Spellcasting Savant",
+    "Slaughter of Sorcery",
+    "Barren Icescape",
+    "Overshadow",
+    "Magic Made Manifest",
+]
+
+AOS = 0
+W40K = 1
+BOLT_ACTION = 2
+OLD_WORLD = 3
+KINGS_OF_WAR = 4
+
+GAME_TYPES = [
+    (AOS, "Age of Sigmar"),
+    (W40K, "Warhammer 40k"),
+    (BOLT_ACTION, "Bolt Action"),
+    (OLD_WORLD, "Old World"),
+    (KINGS_OF_WAR, "Kings of War"),
+]
 
 class Location(models.Model):
     id = models.AutoField(primary_key=True)
@@ -278,6 +483,7 @@ class List(models.Model):
         max_length=255,
         null=True,
         blank=True,
+        choices=zip(aos_subfactions, aos_subfactions),
         db_index=True,
         verbose_name="Subfaction",
     )
