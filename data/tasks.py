@@ -220,7 +220,7 @@ def extract_faction_details_for_aos(army_list_id: int):
     army_list = List.objects.get(id=army_list_id)
     list_text = army_list.raw_list
     prompt = f"""
-    For given list of Age of Sigmar please fill in the following fields and return it as json document: {{"faction": string,"subfaction": string,}}
+    For given list of Age of Sigmar please fill in the following fields and return it as json document: {{"faction": string,"subfaction": string,"drops: int, "points": int,"manifestation_lore": string,"prayer_lore": string,"spell_lore": string}}
     
     Return only the json document, with no wrapper, markings or other commentary. If there are multiple lists, only process the first one, never return more than 1 set of requested data. Remove any text from it that's not directly the subfaction or faction.
 
@@ -359,10 +359,38 @@ def extract_faction_details_for_aos(army_list_id: int):
         "Stomper Tribe",
         "Boss Tribe",
     ]
+    
+    and valid manifestation lores = [
+        "Manifestations of Tzeentch",
+        "Manifestations of Malevolence",
+        "Judgements of Khorne",
+        "Manifestations of Depravity",
+        "Manifestations of Doom",
+        "Bestial Manifestations",
+        "Chthonic Sorceries",
+        "Manifested Insanity",
+        "Horrors of the Necropolis",
+        "Dank Manifestations",
+        "Manifestations of Hysh",
+        "Magmic Invocations",
+        "Manifestations of Khaine",
+        "Manifestations of the Deepwood",
+        "Manifestations of the Storm",
+        "Krondspine Incarnate",
+        "Morbid Conjuration",
+        "Primal Energy",
+        "Aetherwrought Machineries",
+        "Forbidden Power",
+        "Twilit Sorceries",
+    ]
 
 
     Ignore how the faction in the list is written, just match it to the closest faction in the
     above and return that faction if there is a match (typos and shorthand are expected). If the faction is not in the list, return "False", if the subfaction is not in the list of subfactions, return "False".
+
+    Additionally calculate number of drops, each regiment (defined explicitly as regiment, not a unit belonging to it) or auxiliary troop in a list counts as one drop. Points usually are noted above unit in parenthesis, but it's not a given.
+    
+    If available also extract manifestation, spell and player lore, but if it's not available simply put down false instead of guessing
 
     list:
 
@@ -377,6 +405,11 @@ def extract_faction_details_for_aos(army_list_id: int):
             faction = faction.split(" - ")[0]
         subfaction = details["subfaction"]
         grand_strategy = details["grand_strategy"]
+        army_list.manifestation_lores = details.get("manifestation_lore", None)
+        army_list.prayer_lores = details.get("prayer_lore", None)
+        army_list.spell_lores = details.get("spell_lore", None)
+        army_list.drops = details.get("drops", None)
+        army_list.points = details.get("points", None)
         army_list.faction = faction
         army_list.subfaction = subfaction
         army_list.grand_strategy = grand_strategy
@@ -408,9 +441,11 @@ def extract_faction_details_for_aos(army_list_id: int):
             print(f"Subfaction {payload['subfaction']} not recognized.")
             payload["subfaction"] = None
         army_list.subfaction = payload["subfaction"]
-        army_list.manifestation_lores = payload.get("manifestation_lores", None)
-        army_list.prayer_lores = payload.get("prayer_lores", None)
-        army_list.spell_lores = payload.get("spell_lores", None)
+        army_list.manifestation_lore = payload.get("manifestation_lore", None)
+        army_list.prayer_lore = payload.get("prayer_lore", None)
+        army_list.spell_lore = payload.get("spell_lore", None)
+        army_list.drops = payload.get("drops", None)
+        army_list.points = payload.get("points", None)
         if army_list.faction == "":
             army_list.faction = None
         if army_list.subfaction == "":
