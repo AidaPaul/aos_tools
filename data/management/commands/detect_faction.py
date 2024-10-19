@@ -21,7 +21,8 @@ def ask_chat_gpt(prompt):
         ],
         "max_tokens": 100,
         "temperature": 0.7,
-        "model": "gpt-3.5-turbo-1106",
+        "model": "gpt-4o-mini",
+        "response_format": {"type": "json_object"},
     }
     headers = {
         "Content-Type": "application/json",
@@ -95,7 +96,9 @@ def extract_faction_details_for_aos(army_list_id: int):
     army_list = List.objects.get(id=army_list_id)
     list_text = army_list.raw_list
     prompt = f"""
-    For given list of Age of Sigmar please fill in the following fields and return it as json document. Fields: `faction, subfaction` and unify them to original names from the game. Return only the json document, with no wrapper, markings or other commentary. If there are multiple lists, only process the first one, never return more than 1 set of requested data. Remove any text from it that's not directly the subfaction or faction.
+    For given list of Age of Sigmar please fill in the following fields and return it as json document: {{"faction": string,"subfaction": string,}}
+    
+    Return only the json document, with no wrapper, markings or other commentary. If there are multiple lists, only process the first one, never return more than 1 set of requested data. Remove any text from it that's not directly the subfaction or faction.
 
     Valid list of factions: aos_factions = [
         "Stormcast Eternals",
@@ -125,9 +128,8 @@ def extract_faction_details_for_aos(army_list_id: int):
         "Ogor Mawtribes",
     ]
 
-    you must be sure that the list is in one of those factions.
-
-    Additionally return grand_strategy field where available
+    Ignore how the faction in the list is written, just match it to the closest faction in the
+    above and return that faction if there is a match (typos and shorthand are expected). If the faction is not in the list, return "False" as faction and subfaction.
 
     list:
 
@@ -157,7 +159,6 @@ def extract_faction_details_for_aos(army_list_id: int):
             f"Failed to detect faction for {army_list.source_id} error: {e} using regex"
         )
     response = ask_chat_gpt(prompt)
-    payload = None
     try:
         payload = json.loads(response.replace("```", "").replace("json", ""))
     except json.decoder.JSONDecodeError as e:
@@ -166,8 +167,13 @@ def extract_faction_details_for_aos(army_list_id: int):
         army_list.gpt_parse_error = e
         return False
     try:
+        if payload["faction"] not in aos_factions:
+            raise ValueError(f"Faction {payload['faction']} not recognized.")
         army_list.faction = payload["faction"]
         army_list.subfaction = payload["subfaction"]
+        army_list.manifestation_lores = payload.get("manifestation_lores", None)
+        army_list.prayer_lores = payload.get("prayer_lores", None)
+        army_list.spell_lores = payload.get("spell_lores", None)
         if army_list.faction == "":
             army_list.faction = None
         if army_list.subfaction == "":
@@ -264,12 +270,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         army_lists = (
             List.objects.exclude(Q(raw_list=""))
-            .filter(Q(faction__isnull=True))
+            # .filter(Q(faction__isnull=True))
             .annotate(event_date=F("participant__event__start_date"))
             .annotate(game_type=F("participant__event__game_type"))
-            .filter(game_type__in=[AOS, W40K])
-            .filter(event_date__gte="2024-04-01")
-            .exclude(gpt_parsed=True)
+            .filter(game_type__in=[AOS])
+            .filter(event_date__gte="2024-07-01")
+            # .exclude(gpt_parsed=True)
             .filter(~Q(raw_list="") | ~Q(raw_list__isnull=True))
         )
         self.stdout.write(f"Detecting for {army_lists.count()} lists")
@@ -278,4 +284,4 @@ class Command(BaseCommand):
                 extract_faction_details_for_aos(army_list.id)
             elif army_list.game_type == W40K:
                 extract_faction_details_for_40k(army_list.id)
-        print(failed_factions)
+        self.stdout.write(f"Failed factions: {failed_factions}")

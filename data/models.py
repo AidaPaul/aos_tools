@@ -103,6 +103,7 @@ GHB_2021 = 2021
 GHB_2022S1 = 20221
 GHB_2022S2 = 20222
 GHB_2023 = 2023
+GHB_2024 = 2024
 
 
 GHB_2022S1_STRATEGIES = [
@@ -129,6 +130,7 @@ GHB_2023_STRATEGIES = [
     "Overshadow",
     "Magic Made Manifest",
 ]
+
 
 AOS = 0
 W40K = 1
@@ -216,13 +218,18 @@ class List(models.Model):
     player_updated_at = models.DateTimeField(null=True)
     raw_list = models.TextField()
     faction = models.CharField(
-        max_length=255, null=True, choices=zip(aos_factions, aos_factions)
+        max_length=255, null=True, choices=zip(aos_factions, aos_factions), db_index=True
     )
-    subfaction = models.CharField(max_length=255, null=True)
-    grand_strategy = models.CharField(max_length=255, null=True)
-    regexp_parsed = models.BooleanField(default=False)
-    gpt_parsed = models.BooleanField(default=False)
-    gpt_parse_error = models.JSONField(null=True)
+    subfaction = models.CharField(max_length=255, null=True, db_index=True)
+    grand_strategy = models.CharField(max_length=255, null=True, db_index=True)
+    regexp_parsed = models.BooleanField(default=False, db_index=True)
+    gpt_parsed = models.BooleanField(default=False, db_index=True)
+    gpt_parse_error = models.JSONField(null=True, db_index=True)
+    drops = models.IntegerField(null=True, db_index=True)
+    points = models.IntegerField(null=True, db_index=True)
+    manifestation_lore = models.CharField(max_length=255, null=True, db_index=True)
+    spell_lore = models.CharField(max_length=255, null=True, db_index=True)
+    prayer_lore = models.CharField(max_length=255, null=True, db_index=True)
 
 
 class Pairing(models.Model):

@@ -89,7 +89,7 @@ def event_lists(request, event_id):
 
 
 def export_pairings_as_csv(request, game_type: int = AOS):
-    daterange_start = datetime.date.today() - datetime.timedelta(days=30 * 6)
+    daterange_start = datetime.date.today() - datetime.timedelta(days=1*30)
     daterange_end = datetime.date.today()
     pairings = Pairing.objects.filter(
         Q(event__start_date__range=[daterange_start, daterange_end])

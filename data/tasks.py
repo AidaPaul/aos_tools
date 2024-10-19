@@ -38,7 +38,7 @@ def fetch_pairings_for_event(event_id: int):
         return
     while current_round <= max_rounds:
         current_round += 1
-        url = f"https://newprod-api.bestcoastpairings.com/v1/pairings?limit=100&eventId={event.source_id}&round={current_round}&pairingType=Pairing&expand%5B%5D=player1&expand%5B%5D=player2&expand%5B%5D=player1Game&expand%5B%5D=player2Game"
+        url = f"https://newprod-api.bestcoastpairings.com/v1/pairings?limit=50&eventId={event.source_id}&round={current_round}&pairingType=Pairing&expand%5B%5D=player1&expand%5B%5D=player2&expand%5B%5D=player1Game&expand%5B%5D=player2Game"
         base_url = copy(url)
         response = requests.get(url, headers=headers)
         if response.status_code != 200:

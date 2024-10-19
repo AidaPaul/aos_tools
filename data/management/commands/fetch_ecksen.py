@@ -17,7 +17,7 @@ from data.models import (
     GHB_2023,
     WIN,
     LOSS,
-    DRAW,
+    DRAW, GHB_2024,
 )
 
 fetch_all_query = """
@@ -94,6 +94,8 @@ class Command(BaseCommand):
                 event_dict["season"] = GHB_2022S2
             elif event["gamingSystem"]["edition"] == "GH23-24":
                 event_dict["season"] = GHB_2023
+            elif event["gamingSystem"]["edition"] == "GH24-25":
+                event_dict["season"] = GHB_2024
             else:
                 raise Exception(
                     f"Unknown season: {event['gamingSystem']['edition']} for event {event}"

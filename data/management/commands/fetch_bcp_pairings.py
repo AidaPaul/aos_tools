@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.core.management.base import BaseCommand
 
 from data.models import *
@@ -17,10 +19,13 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        month_ago = datetime.now() - timedelta(days=30)
+        in_two_weeks = datetime.now() + timedelta(days=14)
         events = (
             Event.objects.filter(source=BCP)
-            .filter(game_type__in=[W40K, AOS])
-            .filter(start_date__gte="2024-04-04")
+            .filter(game_type__in=[AOS, OLD_WORLD])
+            .filter(start_date__gte=month_ago)
+            .filter(end_date__lte=in_two_weeks)
         )
         self.stdout.write(f"Fetching data for {events.count()} events")
         tasks = []

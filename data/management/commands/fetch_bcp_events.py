@@ -18,7 +18,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        month = 1
+        month = 8
         year = 2024
         limit = 100
         headers = settings.BCP_HEADERS
