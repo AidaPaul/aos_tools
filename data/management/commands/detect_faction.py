@@ -4,7 +4,6 @@ import re
 import requests
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db import DataError
 from django.db.models import Q, F
 
 from data.models import *
@@ -92,224 +91,6 @@ def regexp_army_details_aos(text):
     }
 
 
-def extract_faction_details_for_aos(army_list_id: int):
-    army_list = List.objects.get(id=army_list_id)
-    list_text = army_list.raw_list
-    prompt = f"""
-    For given list of Age of Sigmar please fill in the following fields and return it as json document: {{"faction": string,"subfaction": string,}}
-    
-    Return only the json document, with no wrapper, markings or other commentary. If there are multiple lists, only process the first one, never return more than 1 set of requested data. Remove any text from it that's not directly the subfaction or faction.
-
-    Valid list of factions: aos_factions = [
-        "Stormcast Eternals",
-        "Daughters of Khaine",
-        "Fyreslayers",
-        "Idoneth Deepkin",
-        "Kharadron Overlords",
-        "Lumineth Realm-lords",
-        "Sylvaneth",
-        "Seraphon",
-        "Cities of Sigmar",
-        "Slaves to Darkness",
-        "Blades of Khorne",
-        "Disciples of Tzeentch",
-        "Hedonites of Slaanesh",
-        "Maggotkin of Nurgle",
-        "Skaven",
-        "Beasts of Chaos",
-        "Legion of Azgorh",
-        "Flesh-eater Courts",
-        "Nighthaunt",
-        "Ossiarch Bonereapers",
-        "Soulblight Gravelords",
-        "Orruk Warclans",
-        "Gloomspite Gitz",
-        "Sons of Behemat",
-        "Ogor Mawtribes",
-    ]
-    
-    Valid list of subfactions: aos_subfactions = [
-        "Fortress-City Defenders",
-        "Collegiate Arcane Expedition",
-        "Dawnbringer Crusade",
-        "Ironweld Guild Army",
-        "Scáthcoven",
-        "Shadow Patrol",
-        "Cauldron Guard",
-        "Slaughter Troupe",
-        "Scales of Vulcatrix",
-        "Forge Brethren",
-        "Warrior Kinband",
-        "Lords of the Lodge",
-        "Akhelian Beastmasters",
-        "Soul-raid Ambushers",
-        "Isharann Council",
-        "Namarti Corps",
-        "Endrineers Guild Expeditionary Force",
-        "Iron Sky Attack Squadron",
-        "Grundcorps Wing",
-        "Aether-runners",
-        "Vanari Battlehost",
-        "Alarith Temple",
-        "Scinari Council",
-        "Hurakan Temple",
-        "Thunderhead Host",
-        "Lightning Echelon",
-        "Vanguard Wing",
-        "Sentinels of the Bleak Citadels",
-        "Eternal Starhost",
-        "Shadowstrike Starhost",
-        "Sunclaw Starhost",
-        "Thunderquake Starhost",
-        "Lords of the Clan",
-        "Outcasts",
-        "Free Spirits",
-        "Forest Folk",
-        "Death Battle formations",
-        "Cannibal Court",
-        "Ghoul Patrol",
-        "Lords of the Manor",
-        "Royal Menagerie",
-        "Vanishing Phantasms",
-        "Hunters of the Accursed",
-        "Death Stalkers",
-        "Procession of Death",
-        "Mortisan Council",
-        "Mortek Phalanx",
-        "Kavalos Lance",
-        "Mortek Ballistari",
-        "Legion of Shyish",
-        "Deathstench Drove",
-        "Bacchanal of Blood",
-        "Deathmarch",
-        "Marauding Brayherd",
-        "Hungering Warherd",
-        "Almighty Beastherd",
-        "Thunderscorn Stormherd",
-        "Depraved Carnival",
-        "Epicurean Revellers",
-        "Seeker Cavalcade",
-        "Supreme Sybarites",
-        "Khornate Legion",
-        "Brass Stampede",
-        "Murder Host",
-        "Bloodbound Warhorde",
-        "Tallyband of Nurgle",
-        "Plague Cyst",
-        "Nurgle’s Menagerie",
-        "Affliction Cyst",
-        "Despoilers",
-        "Darkoath Horde",
-        "Godsworn Warband",
-        "Legion of Chaos",
-        "Claw-Horde",
-        "Fleshmeld Menargerie",
-        "Virulent Procession",
-        "Warpog Convocation",
-        "Arcanite Cabal",
-        "Tzaangor Coven",
-        "Change Host",
-        "Wyrdflame Host",
-        "Kunnin' Rukk",
-        "Snaga Rukk",
-        "Brutal Rukk",
-        "Kop Rukk",
-        "Squigalanch",
-        "Moonclan Skrap",
-        "Troggherd",
-        "Spiderfang Stalktribe",
-        "Prophets of the Gulping God",
-        "Heralds of the Everwinter",
-        "Beast Handlers",
-        "Blackpowder Fanatics",
-        "Ironfist",
-        "Weirdfist",
-        "Ironjawz Brawl",
-        "Grunta Stampede",
-        "Kruleboyz Klaw",
-        "Middul Finga",
-        "Light Finga",
-        "Trophy Finga",
-        "Taker Tribe",
-        "Breaker Tribe",
-        "Stomper Tribe",
-        "Boss Tribe",
-    ]
-
-
-    Ignore how the faction in the list is written, just match it to the closest faction in the
-    above and return that faction if there is a match (typos and shorthand are expected). If the faction is not in the list, return "False", if the subfaction is not in the list of subfactions, return "False".
-
-    list:
-
-                {list_text}
-                """
-    try:
-        details = regexp_army_details_aos(list_text)
-        faction = details["faction"]
-        if "\t" in faction:
-            faction = faction.split("\t")[0]
-        if " - " in faction:
-            faction = faction.split(" - ")[0]
-        subfaction = details["subfaction"]
-        grand_strategy = details["grand_strategy"]
-        army_list.faction = faction
-        army_list.subfaction = subfaction
-        army_list.grand_strategy = grand_strategy
-        army_list.save()
-        print(
-            f"Detected faction: {faction} and subfaction: {subfaction} for {army_list.source_id} using regex"
-        )
-        army_list.regexp_parsed = True
-        army_list.save()
-        return True
-    except (ValueError, DataError) as e:
-        print(
-            f"Failed to detect faction for {army_list.source_id} error: {e} using regex"
-        )
-    response = ask_chat_gpt(prompt)
-    try:
-        payload = json.loads(response.replace("```", "").replace("json", ""))
-    except json.decoder.JSONDecodeError as e:
-        print(f"Failed to decode json for {army_list.source_id} error: {e}")
-        army_list.gpt_parsed = True
-        army_list.gpt_parse_error = e
-        return False
-    try:
-        if payload["faction"] not in aos_factions:
-            raise ValueError(f"Faction {payload['faction']} not recognized.")
-        army_list.faction = payload["faction"]
-        if payload["subfaction"] not in aos_subfactions:
-            raise ValueError(f"Subfaction {payload['subfaction']} not recognized.")
-        army_list.subfaction = payload["subfaction"]
-        army_list.manifestation_lores = payload.get("manifestation_lores", None)
-        army_list.prayer_lores = payload.get("prayer_lores", None)
-        army_list.spell_lores = payload.get("spell_lores", None)
-        if army_list.faction == "":
-            army_list.faction = None
-        if army_list.subfaction == "":
-            army_list.subfaction = None
-        if "grand_strategy" in payload:
-            army_list.grand_strategy = payload["grand_strategy"]
-    except KeyError as e:
-        print(
-            f"Failed to detect faction for {army_list.source_id} error: {e} using gpt"
-        )
-    try:
-        army_list.save()
-        army_list.gpt_parsed = True
-        army_list.save()
-    except DataError as e:
-        print(f"Failed to save faction for {army_list.source_id} error: {e}")
-        army_list.gpt_parsed = True
-        army_list.gpt_parse_error = e
-        army_list.save()
-    print(
-        f"Detected faction: {army_list.faction} and subfaction: {army_list.subfaction} for {army_list.source_id} using gpt"
-    )
-    return True
-
-
 def extract_faction_details_for_40k(id):
     army_list = List.objects.get(id=id)
     list_text = army_list.raw_list
@@ -375,10 +156,21 @@ def extract_faction_details_for_40k(id):
         print(f"Failed to detect faction for {army_list.source_id} using text")
 
 
+
 class Command(BaseCommand):
     help = "Detect Faction and Subfaction for downloaded lists"
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--celery',
+            action='store_true',
+            help="Use Celery to process faction extraction asynchronously."
+        )
+
     def handle(self, *args, **options):
+        from data.tasks import extract_faction_details_for_aos
+        use_celery = options['celery']
+
         army_lists = (
             List.objects.exclude(Q(raw_list=""))
             .filter(Q(faction__isnull=True))
@@ -389,10 +181,23 @@ class Command(BaseCommand):
             .exclude(gpt_parsed=True)
             .filter(~Q(raw_list="") | ~Q(raw_list__isnull=True))
         )
+
         self.stdout.write(f"Detecting for {army_lists.count()} lists")
+
+        job_count = 0
         for army_list in army_lists:
             if army_list.game_type == AOS:
-                extract_faction_details_for_aos(army_list.id)
+                if use_celery:
+                    extract_faction_details_for_aos.delay(army_list.id)  # Asynchronous Celery task
+                else:
+                    extract_faction_details_for_aos(army_list.id)  # Synchronous function call
             elif army_list.game_type == W40K:
-                extract_faction_details_for_40k(army_list.id)
-        self.stdout.write(f"Failed factions: {failed_factions}")
+                if use_celery:
+                    extract_faction_details_for_40k.delay(army_list.id)  # Asynchronous Celery task
+                else:
+                    extract_faction_details_for_40k(army_list.id)  # Synchronous function call
+
+            job_count += 1
+
+        self.stdout.write(f"Total jobs created: {job_count}")
+        self.stdout.write("All jobs dispatched.")

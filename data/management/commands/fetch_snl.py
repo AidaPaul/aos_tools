@@ -120,11 +120,13 @@ def store_tournaments(tournaments):
             name=tournament["name"],
             source=source,
             source_id=source_id,
-            source_json=source_json,
-            start_date=tournament["startDate"],
-            players_count=tournament["attendeeCount"],
-            points_limit=2000,
-            rounds=5,
+            defaults={
+                "source_json": source_json,
+                "start_date": tournament["startDate"],
+                "players_count": tournament["attendeeCount"],
+                "points_limit": 2000,
+                "rounds": 5,
+            }
         )
         print(f"Stored tournament {event.name}")
 
@@ -137,7 +139,7 @@ def store_players(players, tournament_id):
 
         if not Player.objects.filter(source=source, source_id=source_id).exists():
             player_instance, _ = Player.objects.update_or_create(
-                source=source, source_id=source_id, source_json=source_json
+                source=source, source_id=source_id, defaults={"source_json": source_json}
             )
         else:
             player_instance = Player.objects.get(source=source, source_id=source_id)
@@ -145,14 +147,16 @@ def store_players(players, tournament_id):
         participant, _ = Participant.objects.get_or_create(
             event=Event.objects.get(source_id=tournament_id),
             player=player_instance,
-            source_json=player,
+            defaults={"source_json": player},
         )
 
         player_list, _ = List.objects.get_or_create(
             participant=participant,
             source_id=player["registrationID"],
-            source_json=player,
-            raw_list=str(player["listPlainText"]),
+            defaults={
+                "source_json": player,
+                "raw_list": str(player["listPlainText"]),
+            }
         )
         print(f"Stored player {player['playerName']}")
 
@@ -160,7 +164,8 @@ def store_players(players, tournament_id):
 def store_pairings(pairings, tournament_id):
     for pairing in pairings:
         source = SNL
-        source_id = pairing["tournamentID"]
+        # Generate a unique source_id for the pairing
+        source_id = f"{tournament_id}_{pairing['roundNumber']}_{pairing['playerId1']}_{pairing['playerId2']}"
         source_json = pairing
 
         try:
@@ -179,36 +184,48 @@ def store_pairings(pairings, tournament_id):
             continue
         player1_list = List.objects.get(participant__player=player1)
         player2_list = List.objects.get(participant__player=player2)
+
+        # Determine winner, loser, and is_draw
         if pairing["playerResult1"] == "WIN":
-            player1_result = "2"
-            player2_result = "0"
+            is_draw = False
+            winner = participant1
+            loser = participant2
+            winner_list = player1_list
+            loser_list = player2_list
+            winner_score = pairing["playerScore1"]
+            loser_score = pairing["playerScore2"]
         elif pairing["playerResult2"] == "WIN":
-            player1_result = "0"
-            player2_result = "2"
+            is_draw = False
+            winner = participant2
+            loser = participant1
+            winner_list = player2_list
+            loser_list = player1_list
+            winner_score = pairing["playerScore2"]
+            loser_score = pairing["playerScore1"]
         else:
-            player1_result = "1"
-            player2_result = "1"
+            is_draw = True
+            winner = None
+            loser = None
+            winner_list = None
+            loser_list = None
+            winner_score = pairing["playerScore1"]
+            loser_score = pairing["playerScore2"]
 
         if not Pairing.objects.filter(
-            event__source_id=tournament_id,
-            round=pairing["roundNumber"],
             source_id=source_id,
-            player1=participant1,
-            player2=participant2,
         ).exists():
             pairing = Pairing.objects.create(
                 event=Event.objects.get(source_id=tournament_id),
                 round=pairing["roundNumber"],
                 source_id=source_id,
-                source_json=pairing,
-                player1=participant1,
-                player2=participant2,
-                player1_list=player1_list,
-                player2_list=player2_list,
-                player1_result=player1_result,
-                player2_result=player2_result,
-                player1_score=pairing["playerScore1"],
-                player2_score=pairing["playerScore2"],
+                source_json=source_json,
+                winner=winner,
+                loser=loser,
+                is_draw=is_draw,
+                winner_list=winner_list,
+                loser_list=loser_list,
+                winner_score=winner_score,
+                loser_score=loser_score,
             )
 
 
