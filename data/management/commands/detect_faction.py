@@ -270,12 +270,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         army_lists = (
             List.objects.exclude(Q(raw_list=""))
-            # .filter(Q(faction__isnull=True))
+            .filter(Q(faction__isnull=True))
             .annotate(event_date=F("participant__event__start_date"))
             .annotate(game_type=F("participant__event__game_type"))
             .filter(game_type__in=[AOS])
             .filter(event_date__gte="2024-07-01")
-            # .exclude(gpt_parsed=True)
+            .exclude(gpt_parsed=True)
             .filter(~Q(raw_list="") | ~Q(raw_list__isnull=True))
         )
         self.stdout.write(f"Detecting for {army_lists.count()} lists")

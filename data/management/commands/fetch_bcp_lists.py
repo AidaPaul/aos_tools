@@ -1,17 +1,17 @@
-import datetime
+import logging
+from datetime import timedelta
 
 from django.core.management.base import BaseCommand
 from django.db.models import Q
+from django.utils import timezone
 
-from data.models import *
+from data.models import List
 from data.tasks import fetch_list
-import logging
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
 
+logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
-    help = "Fetch events from BCP"
+    help = "Fetch lists from BCP"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -19,15 +19,19 @@ class Command(BaseCommand):
             action="store_true",
             dest="celery",
             default=False,
-            help="Use celery to fetch lists",
+            help="Use Celery to fetch lists",
         )
 
     def handle(self, *args, **options):
-        date_month_ago = datetime.datetime.now() - datetime.timedelta(days=30)
+        date_month_ago = timezone.now() - timedelta(days=30)
 
         lists = List.objects.filter(
-            Q(source_id__isnull=False) & (Q(raw_list__isnull=True) | Q(raw_list=""))
-        ).filter(participant__event__start_date__gte=date_month_ago)
+            source_id__isnull=False
+        ).filter(
+            Q(raw_list__isnull=True) | Q(raw_list__exact="")
+        ).filter(
+            participant__event__start_date__gte=date_month_ago
+        )
 
         self.stdout.write(f"Fetching data for {lists.count()} lists")
         tasks = []
@@ -40,4 +44,4 @@ class Command(BaseCommand):
         if options["celery"]:
             self.stdout.write(f"Started {len(tasks)} tasks")
         else:
-            self.stdout.write(f"Finished fetching lists")
+            self.stdout.write("Finished fetching lists")
