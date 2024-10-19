@@ -89,7 +89,7 @@ def event_lists(request, event_id):
 
 
 def export_pairings_as_csv(request, game_type: int = AOS):
-    daterange_start = datetime.date.today() - datetime.timedelta(days=1*30)
+    daterange_start = datetime.date.today() - datetime.timedelta(days=30)
     daterange_end = datetime.date.today()
     pairings = Pairing.objects.filter(
         Q(event__start_date__range=[daterange_start, daterange_end])
@@ -117,100 +117,69 @@ def export_pairings_as_csv(request, game_type: int = AOS):
         [
             "pairing_id",
             "round",
-            "player1_name",
-            "player2_name",
-            "player1_result",
-            "player2_result",
-            "player1_score",
-            "player2_score",
+            "winner_name",
+            "loser_name",
+            "is_draw",
+            "winner_score",
+            "loser_score",
             "event_name",
             "event_date",
             "event_end_date",
             "event_country",
             "event_online",
             "season",
-            "player1_faction",
-            "player1_subfaction",
-            "player2_faction",
-            "player2_subfaction",
-            "player1_list_url",
-            "player2_list_url",
+            "winner_faction",
+            "winner_subfaction",
+            "loser_faction",
+            "loser_subfaction",
+            "winner_list_url",
+            "loser_list_url",
             "source",
         ]
     )
 
     for pairing in pairings:
+        # Determine player names based on event source
         if pairing.event.source == BCP:
-            player1_name = (
-                f"{pairing.player1.player.source_json['firstName']} {pairing.player1.player.source_json['lastName']}"
-                if pairing.player1
+            winner_name = (
+                f"{pairing.winner.player.source_json['firstName']} {pairing.winner.player.source_json['lastName']}"
+                if pairing.winner
                 else ""
             )
-            player2_name = (
-                f"{pairing.player2.player.source_json['firstName']} {pairing.player2.player.source_json['lastName']}"
-                if pairing.player2
+            loser_name = (
+                f"{pairing.loser.player.source_json['firstName']} {pairing.loser.player.source_json['lastName']}"
+                if pairing.loser
                 else ""
             )
         elif pairing.event.source == ECKSEN:
-            player1_name = (
-                pairing.player1.player.source_json["name"] if pairing.player1 else ""
-            )
-            player2_name = (
-                pairing.player2.player.source_json["name"] if pairing.player2 else ""
-            )
+            winner_name = pairing.winner.player.source_json["name"] if pairing.winner else ""
+            loser_name = pairing.loser.player.source_json["name"] if pairing.loser else ""
         else:
-            player1_name = (
-                pairing.player1.player.source_json["playerName"]
-                if pairing.player1
-                else ""
-            )
-            player2_name = (
-                pairing.player2.player.source_json["playerName"]
-                if pairing.player2
-                else ""
-            )
-        if pairing.event.source_json and "country" in pairing.event.source_json:
-            event_country = pairing.event.source_json["country"]
-        else:
-            event_country = ""
-        if "isOnlineEvent" in pairing.event.source_json:
-            event_online = pairing.event.source_json["isOnlineEvent"]
-        else:
-            event_online = False
+            winner_name = pairing.winner.player.source_json["playerName"] if pairing.winner else ""
+            loser_name = pairing.loser.player.source_json["playerName"] if pairing.loser else ""
+
+        # Determine event country and if it's an online event
+        event_country = pairing.event.source_json.get("country", "")
+        event_online = pairing.event.source_json.get("isOnlineEvent", False)
+
+        # Faction and subfaction based on winner/loser lists
         if pairing.event.game_type == OLD_WORLD:
-            if pairing.player1_list is None or pairing.player2_list is None:
-                player1_list_faction = ""
-                player1_list_subfaction = ""
-                player2_list_faction = ""
-                player2_list_subfaction = ""
-            else:
-                player1_list_faction = pairing.player1_list.source_json.get(
-                    "armyName", ""
-                )
-                player1_list_subfaction = ""
-                player2_list_faction = pairing.player2_list.source_json.get(
-                    "armyName", ""
-                )
-                player2_list_subfaction = ""
+            winner_list_faction = pairing.winner_list.source_json.get("armyName", "") if pairing.winner_list else ""
+            loser_list_faction = pairing.loser_list.source_json.get("armyName", "") if pairing.loser_list else ""
+            winner_list_subfaction = loser_list_subfaction = ""
         else:
-            player1_list_faction = (
-                pairing.player1_list.faction if pairing.player1_list else ""
-            )
-            player1_list_subfaction = (
-                pairing.player1_list.subfaction if pairing.player1_list else ""
-            )
-            player2_list_faction = (
-                pairing.player2_list.faction if pairing.player2_list else ""
-            )
-            player2_list_subfaction = (
-                pairing.player2_list.subfaction if pairing.player2_list else ""
-            )
+            winner_list_faction = pairing.winner_list.faction if pairing.winner_list else ""
+            loser_list_faction = pairing.loser_list.faction if pairing.loser_list else ""
+            winner_list_subfaction = pairing.winner_list.subfaction if pairing.winner_list else ""
+            loser_list_subfaction = pairing.loser_list.subfaction if pairing.loser_list else ""
 
-        if pairing.player1_list and len(pairing.player1_list.raw_list) > 10000:
-            pairing.player1_list.raw_list = "List too long"
-        if pairing.player2_list and len(pairing.player2_list.raw_list) > 10000:
-            pairing.player2_list.raw_list = "List too long"
+        # Handle long lists
+        if pairing.winner_list and len(pairing.winner_list.raw_list) > 10000:
+            pairing.winner_list.raw_list = "List too long"
+        if pairing.loser_list and len(pairing.loser_list.raw_list) > 10000:
+            pairing.loser_list.raw_list = "List too long"
 
+        # Determine source
         if pairing.event.source == BCP:
             source = "bcp"
         elif pairing.event.source == ECKSEN:
@@ -220,28 +189,28 @@ def export_pairings_as_csv(request, game_type: int = AOS):
         else:
             source = "unknown"
 
+        # Write the row to the CSV
         writer.writerow(
             [
                 pairing.id,
                 pairing.round,
-                player1_name,
-                player2_name,
-                pairing.player1_result,
-                pairing.player2_result,
-                pairing.player1_score,
-                pairing.player2_score,
+                winner_name,
+                loser_name,
+                pairing.is_draw,
+                pairing.winner_score,
+                pairing.loser_score,
                 pairing.event.name,
                 pairing.event.start_date,
                 pairing.event.end_date,
                 event_country,
                 event_online,
-                "2023",
-                player1_list_faction,
-                player1_list_subfaction,
-                player2_list_faction,
-                player2_list_subfaction,
-                pairing.player1_list.raw_list if pairing.player1_list else "",
-                pairing.player2_list.raw_list if pairing.player2_list else "",
+                "2024",
+                winner_list_faction,
+                winner_list_subfaction,
+                loser_list_faction,
+                loser_list_subfaction,
+                pairing.winner_list.raw_list if pairing.winner_list else "",
+                pairing.loser_list.raw_list if pairing.loser_list else "",
                 source,
             ]
         )
