@@ -21,9 +21,13 @@ class Command(BaseCommand):
             body = {"refreshToken": settings.BCP_REFRESH_TOKEN}
             response = requests.post(url, json=body, headers=headers)
             if response.status_code != 200:
-                raise CommandError(
-                    f"Failed to refresh token, code: {response.status_code} body response: {response.text}"
+                self.stdout.write(
+                    self.style.ERROR(
+                        f"Failed to refresh token, status code: {response.status_code}"
+                    )
                 )
+                time.sleep(5)
+                continue
             data = response.json()
             bcp_headers = settings.BCP_HEADERS
             bcp_headers["Authorization"] = f"Bearer {data['accessToken']}"
