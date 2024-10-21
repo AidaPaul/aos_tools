@@ -134,6 +134,16 @@ def export_pairings_as_csv(request, game_type: int = AOS):
             "loser_subfaction",
             "winner_list_url",
             "loser_list_url",
+            "winner_drops",
+            "loser_drops",
+            "winner_points",
+            "loser_points",
+            "winner_manifestation_lore",
+            "loser_manifestation_lore",
+            "winner_spell_lore",
+            "loser_spell_lore",
+            "winner_prayer_lore",
+            "loser_prayer_lore",
             "source",
         ]
     )
@@ -179,6 +189,18 @@ def export_pairings_as_csv(request, game_type: int = AOS):
         if pairing.loser_list and len(pairing.loser_list.raw_list) > 10000:
             pairing.loser_list.raw_list = "List too long"
 
+        # Determine drops, points, lore for winner and loser
+        winner_drops = pairing.winner_list.drops if pairing.winner_list else None
+        loser_drops = pairing.loser_list.drops if pairing.loser_list else None
+        winner_points = pairing.winner_list.points if pairing.winner_list else None
+        loser_points = pairing.loser_list.points if pairing.loser_list else None
+        winner_manifestation_lore = pairing.winner_list.manifestation_lore if pairing.winner_list else ""
+        loser_manifestation_lore = pairing.loser_list.manifestation_lore if pairing.loser_list else ""
+        winner_spell_lore = pairing.winner_list.spell_lore if pairing.winner_list else ""
+        loser_spell_lore = pairing.loser_list.spell_lore if pairing.loser_list else ""
+        winner_prayer_lore = pairing.winner_list.prayer_lore if pairing.winner_list else ""
+        loser_prayer_lore = pairing.loser_list.prayer_lore if pairing.loser_list else ""
+
         # Determine source
         if pairing.event.source == BCP:
             source = "bcp"
@@ -204,13 +226,23 @@ def export_pairings_as_csv(request, game_type: int = AOS):
                 pairing.event.end_date,
                 event_country,
                 event_online,
-                "2024",
+                "2024",  # Assuming season for now, can be dynamically set if needed
                 winner_list_faction,
                 winner_list_subfaction,
                 loser_list_faction,
                 loser_list_subfaction,
                 pairing.winner_list.raw_list if pairing.winner_list else "",
                 pairing.loser_list.raw_list if pairing.loser_list else "",
+                winner_drops,
+                loser_drops,
+                winner_points,
+                loser_points,
+                winner_manifestation_lore,
+                loser_manifestation_lore,
+                winner_spell_lore,
+                loser_spell_lore,
+                winner_prayer_lore,
+                loser_prayer_lore,
                 source,
             ]
         )
