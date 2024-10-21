@@ -396,34 +396,34 @@ def extract_faction_details_for_aos(army_list_id: int):
 
                 {list_text}
                 """
-    try:
-        details = regexp_army_details_aos(list_text)
-        faction = details["faction"]
-        if "\t" in faction:
-            faction = faction.split("\t")[0]
-        if " - " in faction:
-            faction = faction.split(" - ")[0]
-        subfaction = details["subfaction"]
-        grand_strategy = details["grand_strategy"]
-        army_list.manifestation_lores = details.get("manifestation_lore", None)
-        army_list.prayer_lores = details.get("prayer_lore", None)
-        army_list.spell_lores = details.get("spell_lore", None)
-        army_list.drops = details.get("drops", None)
-        army_list.points = details.get("points", None)
-        army_list.faction = faction
-        army_list.subfaction = subfaction
-        army_list.grand_strategy = grand_strategy
-        army_list.save()
-        print(
-            f"Detected faction: {faction} and subfaction: {subfaction} for {army_list.source_id} using regex"
-        )
-        army_list.regexp_parsed = True
-        army_list.save()
-        return True
-    except (ValueError, DataError) as e:
-        print(
-            f"Failed to detect faction for {army_list.source_id} error: {e} using regex"
-        )
+    # try:
+    #     details = regexp_army_details_aos(list_text)
+    #     faction = details["faction"]
+    #     if "\t" in faction:
+    #         faction = faction.split("\t")[0]
+    #     if " - " in faction:
+    #         faction = faction.split(" - ")[0]
+    #     subfaction = details["subfaction"]
+    #     grand_strategy = details["grand_strategy"]
+    #     army_list.manifestation_lores = details.get("manifestation_lore", None)
+    #     army_list.prayer_lores = details.get("prayer_lore", None)
+    #     army_list.spell_lores = details.get("spell_lore", None)
+    #     army_list.drops = details.get("drops", None)
+    #     army_list.points = details.get("points", None)
+    #     army_list.faction = faction
+    #     army_list.subfaction = subfaction
+    #     army_list.grand_strategy = grand_strategy
+    #     army_list.save()
+    #     print(
+    #         f"Detected faction: {faction} and subfaction: {subfaction} for {army_list.source_id} using regex"
+    #     )
+    #     army_list.regexp_parsed = True
+    #     army_list.save()
+    #     return True
+    # except (ValueError, DataError) as e:
+    #     print(
+    #         f"Failed to detect faction for {army_list.source_id} error: {e} using regex"
+    #     )
     response = ask_chat_gpt(prompt)
     try:
         payload = json.loads(response.replace("```", "").replace("json", ""))

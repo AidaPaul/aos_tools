@@ -74,6 +74,7 @@ class Command(BaseCommand):
 
         query = gql(fetch_all_query)
         response = client.execute(query, variable_values={"gamingSystemId": 1})
+
         for event in response["tournamentResultsBySystem"]:
             event_dict = {
                 "source": ECKSEN,
@@ -84,6 +85,7 @@ class Command(BaseCommand):
                 "players_count": len(event["players"]),
                 "start_date": f"{event['date']}T00:00:00+02:00",
             }
+
             if event["gamingSystem"]["edition"] == "GH21":
                 event_dict["season"] = GHB_2021
             elif event["gamingSystem"]["edition"] == "GH22":
@@ -146,6 +148,7 @@ class Command(BaseCommand):
                     if result["outcome"] == "UNPAIRED" or result["againstPlayerId"] is None:
                         continue
                     round_number, round_scenario = event_rounds[result["roundId"]]
+
                     # Ensure both player IDs are not None
                     if player['id'] is None or result['againstPlayerId'] is None:
                         self.stdout.write(
@@ -154,6 +157,7 @@ class Command(BaseCommand):
                             )
                         )
                         continue
+
                     # Generate a unique source_id regardless of player order
                     player_ids = sorted([player['id'], result['againstPlayerId']])
 
