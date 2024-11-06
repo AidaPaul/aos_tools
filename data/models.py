@@ -20,6 +20,7 @@ W40K = 1
 BOLT_ACTION = 2
 OLD_WORLD = 3
 KINGS_OF_WAR = 4
+SPEARHEAD = 5
 
 GAME_TYPES = [
     (AOS, "Age of Sigmar"),
@@ -31,32 +32,32 @@ GAME_TYPES = [
 
 # Factions Lists
 aos_factions = [
-    "Stormcast Eternals",
-    "Daughters of Khaine",
-    "Fyreslayers",
-    "Idoneth Deepkin",
-    "Kharadron Overlords",
-    "Lumineth Realm-lords",
-    "Sylvaneth",
-    "Seraphon",
-    "Cities of Sigmar",
-    "Slaves to Darkness",
-    "Blades of Khorne",
-    "Disciples of Tzeentch",
-    "Hedonites of Slaanesh",
-    "Maggotkin of Nurgle",
-    "Skaven",
     "Beasts of Chaos",
-    "Legion of Azgorh",
-    "Flesh-eater Courts",
-    "Nighthaunt",
-    "Ossiarch Bonereapers",
-    "Soulblight Gravelords",
-    "Orruk Warclans",
+    "Blades of Khorne",
+    "Bonesplitterz",
+    "Cities of Sigmar",
+    "Daughters of Khaine",
+    "Disciples of Tzeentch",
+    "Flesh-Eater Courts",
+    "Fyreslayers",
     "Gloomspite Gitz",
-    "Sons of Behemat",
+    "Hedonites of Slaanesh",
+    "Idoneth Deepkin",
+    "Ironjawz",
+    "Kharadron Overlords",
+    "Kruleboyz",
+    "Lumineth Realm-lords",
+    "Maggotkin of Nurgle",
+    "Nighthaunt",
     "Ogor Mawtribes",
-    "Legion of the First Prince",
+    "Ossiarch Bonereapers",
+    "Seraphon",
+    "Skaven",
+    "Slaves to Darkness",
+    "Sons of Behemat",
+    "Soulblight Gravelords",
+    "Stormcast Eternals",
+    "Sylvaneth",
 ]
 
 aos_subfactions = [

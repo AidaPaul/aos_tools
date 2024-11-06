@@ -5,6 +5,7 @@ import requests
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Q, F
+from redis import DataError
 
 from data.models import *
 
@@ -168,7 +169,8 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        from data.tasks import extract_faction_details_for_aos
+        from data.tasks import (extract_faction_details_for_aos,
+                                extract_faction_details_for_spearhead)
         use_celery = options['celery']
 
         army_lists = (
@@ -176,7 +178,6 @@ class Command(BaseCommand):
             .filter(Q(faction__isnull=True))
             .annotate(event_date=F("participant__event__start_date"))
             .annotate(game_type=F("participant__event__game_type"))
-            .filter(game_type__in=[AOS])
             .filter(event_date__gte="2024-07-01")
             .exclude(gpt_parsed=True)
             .filter(~Q(raw_list="") | ~Q(raw_list__isnull=True))
@@ -191,6 +192,11 @@ class Command(BaseCommand):
                     extract_faction_details_for_aos.delay(army_list.id)  # Asynchronous Celery task
                 else:
                     extract_faction_details_for_aos(army_list.id)  # Synchronous function call
+            elif army_list.game_type == SPEARHEAD:
+                if use_celery:
+                    extract_faction_details_for_spearhead.delay(army_list.id)  # Asynchronous Celery task
+                else:
+                    extract_faction_details_for_spearhead(army_list.id)  # Synchronous function call
             elif army_list.game_type == W40K:
                 if use_celery:
                     extract_faction_details_for_40k.delay(army_list.id)  # Asynchronous Celery task

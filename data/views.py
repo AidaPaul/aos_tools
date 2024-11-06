@@ -13,7 +13,7 @@ from data.models import (
     SNL,
     W40K,
     OLD_WORLD,
-    KINGS_OF_WAR,
+    KINGS_OF_WAR, SPEARHEAD,
 )
 
 
@@ -106,6 +106,8 @@ def export_pairings_as_csv(request, game_type: int = AOS):
         output_game = "old_world"
     elif game_type == KINGS_OF_WAR:
         output_game = "kow"
+    elif game_type == SPEARHEAD:
+        output_game = "spearhead"
     output_name = f"pairings_{output_game}_{daterange_start}_{daterange_end}.csv"
     response["Content-Disposition"] = f'attachment; filename="{output_name}"'
 
@@ -145,6 +147,7 @@ def export_pairings_as_csv(request, game_type: int = AOS):
             "winner_prayer_lore",
             "loser_prayer_lore",
             "source",
+            "is_draw",
         ]
     )
 
@@ -244,6 +247,7 @@ def export_pairings_as_csv(request, game_type: int = AOS):
                 winner_prayer_lore,
                 loser_prayer_lore,
                 source,
+                pairing.is_draw,
             ]
         )
 

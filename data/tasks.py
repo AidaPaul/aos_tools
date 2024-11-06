@@ -225,31 +225,32 @@ def extract_faction_details_for_aos(army_list_id: int):
     Return only the json document, with no wrapper, markings or other commentary. If there are multiple lists, only process the first one, never return more than 1 set of requested data. Remove any text from it that's not directly the subfaction or faction.
 
     Valid list of factions: aos_factions = [
-        "Stormcast Eternals",
-        "Daughters of Khaine",
-        "Fyreslayers",
-        "Idoneth Deepkin",
-        "Kharadron Overlords",
-        "Lumineth Realm-lords",
-        "Sylvaneth",
-        "Seraphon",
-        "Cities of Sigmar",
-        "Slaves to Darkness",
-        "Blades of Khorne",
-        "Disciples of Tzeentch",
-        "Hedonites of Slaanesh",
-        "Maggotkin of Nurgle",
-        "Skaven",
         "Beasts of Chaos",
-        "Legion of Azgorh",
-        "Flesh-eater Courts",
-        "Nighthaunt",
-        "Ossiarch Bonereapers",
-        "Soulblight Gravelords",
-        "Orruk Warclans",
+        "Blades of Khorne",
+        "Bonesplitterz",
+        "Cities of Sigmar",
+        "Daughters of Khaine",
+        "Disciples of Tzeentch",
+        "Flesh-Eater Courts",
+        "Fyreslayers",
         "Gloomspite Gitz",
-        "Sons of Behemat",
+        "Hedonites of Slaanesh",
+        "Idoneth Deepkin",
+        "Ironjawz",
+        "Kharadron Overlords",
+        "Kruleboyz",
+        "Lumineth Realm-lords",
+        "Maggotkin of Nurgle",
+        "Nighthaunt",
         "Ogor Mawtribes",
+        "Ossiarch Bonereapers",
+        "Seraphon",
+        "Skaven",
+        "Slaves to Darkness",
+        "Sons of Behemat",
+        "Soulblight Gravelords",
+        "Stormcast Eternals",
+        "Sylvaneth",
     ]
     
     Valid list of subfactions: aos_subfactions = [
@@ -446,6 +447,8 @@ def extract_faction_details_for_aos(army_list_id: int):
         army_list.spell_lore = payload.get("spell_lore", None)
         army_list.drops = payload.get("drops", None)
         army_list.points = payload.get("points", None)
+        if type(army_list.points) != int:
+            army_list.points = None
         if army_list.faction == "":
             army_list.faction = None
         if army_list.subfaction == "":
@@ -456,6 +459,9 @@ def extract_faction_details_for_aos(army_list_id: int):
         print(
             f"Failed to detect faction for {army_list.source_id} error: {e} using gpt"
         )
+        army_list.gpt_parsed = True
+        army_list.gpt_parse_error = e
+        army_list.save()
     try:
         army_list.save()
         army_list.gpt_parsed = True
@@ -469,3 +475,14 @@ def extract_faction_details_for_aos(army_list_id: int):
         f"Detected faction: {army_list.faction} and subfaction: {army_list.subfaction} for {army_list.source_id} using gpt"
     )
     return True
+
+@shared_task
+def extract_faction_details_for_spearhead(army_list_id: int):
+    army_list = List.objects.get(id=army_list_id)
+    if "army" in army_list.source_json:
+        faction = army_list.source_json["army"]["name"]
+        army_list.faction = faction
+        army_list.save()
+        print(f"Extracted faction details for {army_list.source_id}")
+        return
+    print(f"Failed to extract faction details for {army_list.source_id}")

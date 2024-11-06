@@ -37,4 +37,4 @@ class Command(BaseCommand):
                     f"Successfully refreshed token, new token: {data['accessToken']}"
                 )
             )
-            time.sleep(60)
+            time.sleep(5)

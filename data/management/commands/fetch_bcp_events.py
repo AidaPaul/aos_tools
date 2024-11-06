@@ -2,7 +2,9 @@ from copy import copy
 import requests
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from data.models import Event, BCP, W40K, BOLT_ACTION, AOS, OLD_WORLD, KINGS_OF_WAR
+from data.models import Event, BCP, W40K, BOLT_ACTION, AOS, OLD_WORLD, \
+    KINGS_OF_WAR, SPEARHEAD
+
 
 class Command(BaseCommand):
     help = "Fetch events from BCP"
@@ -91,6 +93,8 @@ class Command(BaseCommand):
                     event_dict["game_type"] = OLD_WORLD
                 elif game_type == 16:
                     event_dict["game_type"] = KINGS_OF_WAR
+                elif game_type == 96:
+                    event_dict["game_type"] = SPEARHEAD
                 else:
                     self.stdout.write(
                         self.style.WARNING(
