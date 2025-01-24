@@ -69,7 +69,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        transport = AIOHTTPTransport(url=settings.ECKSEN_ENDPOINT)
+        transport = AIOHTTPTransport(url=settings.ECKSEN_ENDPOINT, timeout=120)
         client = Client(transport=transport, fetch_schema_from_transport=False)
 
         query = gql(fetch_all_query)

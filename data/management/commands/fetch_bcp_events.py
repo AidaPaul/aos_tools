@@ -25,7 +25,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--year",
             type=int,
-            default=2024,
+            default=2025,
             help="Starting year for fetching events",
         )
         parser.add_argument(

@@ -93,7 +93,7 @@ def export_pairings_as_csv(request, game_type: int = AOS):
     daterange_end = datetime.date.today()
     pairings = Pairing.objects.filter(
         Q(event__start_date__range=[daterange_start, daterange_end])
-        & Q(event__rounds__in=[3, 5, 8])
+        & Q(event__rounds__in=[3, 5, 6, 8])
         & Q(event__game_type=game_type)
     ).order_by("event__name", "-event__start_date", "round", "id")
 
