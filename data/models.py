@@ -338,6 +338,14 @@ class Event(models.Model):
         verbose_name="Game Type",
     )
 
+    @property
+    def participants(self):
+        return Participant.objects.filter(event=self)
+
+    @property
+    def pairings(self):
+        return Pairing.objects.filter(event=self)
+
     def __str__(self):
         return self.name
 
