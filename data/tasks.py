@@ -127,6 +127,10 @@ def fetch_pairings_for_event(event_id: int):
                     # If no clear winner, consider it a draw
                     is_draw = True
 
+                if is_draw:
+                    winner_player = "player1"
+                    loser_player = "player2"
+
                 pairing_dict = {
                     "source_id": pairing["id"],
                     "source_json": pairing,
@@ -135,7 +139,7 @@ def fetch_pairings_for_event(event_id: int):
                     "is_draw": is_draw,
                 }
 
-                if not is_draw and winner_player and loser_player:
+                if winner_player and loser_player:
                     pairing_dict["winner"] = participants[winner_player]
                     pairing_dict["loser"] = participants[loser_player]
                 else:
@@ -150,6 +154,9 @@ def fetch_pairings_for_event(event_id: int):
                     elif not is_draw and winner_player == "player2":
                         pairing_dict["winner_score"] = player2_score
                         pairing_dict["loser_score"] = player1_score
+                    elif is_draw:
+                        pairing_dict["winner_score"] = 10
+                        pairing_dict["loser_score"] = 10
                     else:
                         # In case of draw or unknown winner, assign scores without labels
                         pairing_dict["winner_score"] = player1_score
@@ -167,9 +174,9 @@ def fetch_pairings_for_event(event_id: int):
                             "participant": participants["player1"],
                         },
                     )
-                    if not is_draw and winner_player == "player1":
+                    if winner_player == "player1":
                         pairing_dict["winner_list"] = list1
-                    elif not is_draw and loser_player == "player1":
+                    elif loser_player == "player1":
                         pairing_dict["loser_list"] = list1
                 if "armyListObjectId" in pairing["player2"]:
                     list2, _ = List.objects.update_or_create(
@@ -179,9 +186,9 @@ def fetch_pairings_for_event(event_id: int):
                             "participant": participants["player2"],
                         },
                     )
-                    if not is_draw and winner_player == "player2":
+                    if winner_player == "player2":
                         pairing_dict["winner_list"] = list2
-                    elif not is_draw and loser_player == "player2":
+                    elif loser_player == "player2":
                         pairing_dict["loser_list"] = list2
 
                 # Prepare information for printing
