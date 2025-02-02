@@ -609,13 +609,13 @@ class Pairing(models.Model):
     round = models.PositiveIntegerField(
         verbose_name="Round", help_text="Round number of the pairing."
     )
-    winner_score = models.PositiveIntegerField(
+    winner_score = models.IntegerField(
         null=True,
         blank=True,
         verbose_name="Winner Score",
         help_text="Score of the winner.",
     )
-    loser_score = models.PositiveIntegerField(
+    loser_score = models.IntegerField(
         null=True,
         blank=True,
         verbose_name="Loser Score",
