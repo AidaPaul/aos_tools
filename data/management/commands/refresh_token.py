@@ -23,9 +23,24 @@ class Command(BaseCommand):
             if response.status_code != 200:
                 self.stdout.write(
                     self.style.ERROR(
-                        f"Failed to refresh token, status code: {response.status_code}"
+                        f"Failed to refresh token, status code: {response.status_code}, trying redis headers"
                     )
                 )
+                try:
+                    headers = json.loads(redis_client.get("BCP_HEADERS"))
+                except json.JSONDecodeError:
+                    self.stdout.write(
+                        self.style.ERROR(
+                            f"Failed to load headers from redis, sleeping for 5 seconds"
+                        )
+                    )
+                response = requests.post(url, json=body, headers=headers)
+                if response.status_code != 200:
+                    self.stdout.write(
+                        self.style.ERROR(
+                            f"Failed to refresh token, status code: {response.status_code}, sleeping for 5 seconds"
+                        )
+                    )
                 time.sleep(5)
                 continue
             data = response.json()
