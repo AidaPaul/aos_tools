@@ -19,7 +19,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--month",
             type=int,
-            default=7,
+            default=1,
             help="Starting month for fetching events (1-12)",
         )
         parser.add_argument(
